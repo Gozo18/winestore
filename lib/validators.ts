@@ -22,3 +22,9 @@ export const insertProductSchema = z.object({
   isFeatured: z.boolean(),
   banner: z.string().nullable(),
 })
+
+// Schema for signing users in
+export const signInFormSchema = z.object({
+  email: z.string().email("Musí být e-mail."),
+  password: z.string().min(6, "Heslo musí mít více než 6 znaků."),
+})

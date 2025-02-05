@@ -16,12 +16,12 @@ const Menu = () => {
       <nav className="hidden md:flex w-full max-w-xs gap-1">
         <ModeToggle />
         <Button asChild variant="ghost">
-          <Link href="/cart">
+          <Link href="/kosik">
             <ShoppingCart /> Košík
           </Link>
         </Button>
         <Button asChild>
-          <Link href="/sign-in">
+          <Link href="/prihlaseni">
             <UserIcon /> Přihlásit
           </Link>
         </Button>
@@ -35,12 +35,12 @@ const Menu = () => {
             <SheetTitle>Menu</SheetTitle>
             <ModeToggle />
             <Button asChild variant="ghost">
-              <Link href="/cart">
+              <Link href="/kosik">
                 <ShoppingCart /> Košík
               </Link>
             </Button>
             <Button asChild>
-              <Link href="/sign-in">
+              <Link href="/prihlaseni">
                 <UserIcon /> Přihlásit
               </Link>
             </Button>
