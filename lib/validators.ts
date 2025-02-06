@@ -25,6 +25,19 @@ export const insertProductSchema = z.object({
 
 // Schema for signing users in
 export const signInFormSchema = z.object({
-  email: z.string().email("Musí být e-mail."),
+  email: z.string().email("Musí být e-mailová adresa."),
   password: z.string().min(6, "Heslo musí mít více než 6 znaků."),
 })
+
+// Schema for signing users up
+export const signUpFormSchema = z
+  .object({
+    name: z.string().min(3, "Jméno musí mít více než 3 znaky."),
+    email: z.string().email("Musí být e-mailová adresa."),
+    password: z.string().min(6, "Heslo musí mít více než 6 znaků."),
+    confirmPassword: z.string().min(6, "Heslo musí mít více než 6 znaků."),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Hesla se neshodují.",
+    path: ["confirmPassword"],
+  })
