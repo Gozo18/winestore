@@ -1,11 +1,12 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import qs from "query-string"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Convert prisma objedct to js object
+// Convert prisma object to js object
 export function convertToPlainObject<T>(data: T): T {
   return JSON.parse(JSON.stringify(data))
 }
@@ -69,11 +70,11 @@ export function formatCurrency(amount: number | string | null) {
 }
 
 // Format Number
-/* const NUMBER_FORMATTER = new Intl.NumberFormat("cs-CZ")
+const NUMBER_FORMATTER = new Intl.NumberFormat("cs-CZ")
 
 export function formatNumber(number: number) {
   return NUMBER_FORMATTER.format(number)
-} */
+}
 
 // Shorten UUID
 export function formatId(id: string) {
@@ -118,4 +119,29 @@ export const formatDateTime = (dateString: Date) => {
     dateOnly: formattedDate,
     timeOnly: formattedTime,
   }
+}
+
+// Form the pagination links
+export function formUrlQuery({
+  params,
+  key,
+  value,
+}: {
+  params: string
+  key: string
+  value: string | null
+}) {
+  const query = qs.parse(params)
+
+  query[key] = value
+
+  return qs.stringifyUrl(
+    {
+      url: window.location.pathname,
+      query,
+    },
+    {
+      skipNull: true,
+    }
+  )
 }

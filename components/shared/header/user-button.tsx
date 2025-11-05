@@ -51,8 +51,30 @@ const UserButton = async () => {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuItem className="p-0 mb-1">
-            <Link href="/ucet">Můj účet</Link>
+            <Link
+              href="/uzivatel/profil"
+              className="flex items-center w-full py-4 px-2 h-4"
+            >
+              Můj profil
+            </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem className="p-0 mb-1">
+            <Link
+              href="/uzivatel/objednavky"
+              className="flex items-center w-full py-4 px-2 h-4"
+            >
+              Moje objednávky
+            </Link>
+          </DropdownMenuItem>
+
+          {session?.user?.role === "admin" && (
+            <DropdownMenuItem>
+              <Link href="/admin/prehled" className="w-full">
+                Administrace
+              </Link>
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuItem className="p-0 mb-1">
             <form action={signOutUser} className="w-full">
               <Button

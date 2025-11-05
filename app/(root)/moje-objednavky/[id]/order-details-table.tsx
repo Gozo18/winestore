@@ -9,12 +9,34 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils"
 import { Order } from "@/types"
 import Link from "next/link"
 import Image from "next/image"
+import { useToast } from "@/hooks/use-toast"
+import { useTransition } from "react"
+import {
+  PayPalButtons,
+  PayPalScriptProvider,
+  usePayPalScriptReducer,
+} from "@paypal/react-paypal-js"
+import {
+  createPayPalOrder,
+  approvePayPalOrder,
+  updateOrderToPaidCOD,
+  deliverOrder,
+} from "@/lib/actions/order.actions"
 
-const OrderDetailsTable = ({ order }: { order: Order }) => {
+const OrderDetailsTable = ({
+  order,
+  paypalClientId,
+  isAdmin,
+}: {
+  order: Order
+  paypalClientId: string
+  isAdmin: boolean
+}) => {
   const {
     id,
     shippingAddress,
@@ -30,6 +52,92 @@ const OrderDetailsTable = ({ order }: { order: Order }) => {
     deliveredAt,
     createdAt,
   } = order
+
+  const { toast } = useToast()
+
+  const PrintLoadingState = () => {
+    const [{ isPending, isRejected }] = usePayPalScriptReducer()
+
+    let status = ""
+
+    if (isPending) {
+      status = "Načítám PayPal..."
+    } else if (isRejected) {
+      status = "Chyba při načítání PayPal"
+    }
+
+    return status
+  }
+
+  const handleCreatePayPalOrder = async () => {
+    const res = await createPayPalOrder(order.id)
+
+    if (!res.success) {
+      toast({
+        variant: "destructive",
+        description: res.message,
+      })
+    }
+
+    return res.data
+  }
+
+  const handleApprovePayPalOrder = async (data: { orderID: string }) => {
+    const res = await approvePayPalOrder(order.id, data)
+
+    toast({
+      variant: res.success ? "default" : "destructive",
+      description: res.message,
+    })
+  }
+
+  // Button to mark order as paid
+  const MarkAsPaidButton = () => {
+    const [isPending, startTransition] = useTransition()
+    const { toast } = useToast()
+
+    return (
+      <Button
+        type="button"
+        disabled={isPending}
+        onClick={() =>
+          startTransition(async () => {
+            const res = await updateOrderToPaidCOD(order.id)
+            toast({
+              variant: res.success ? "default" : "destructive",
+              description: res.message,
+            })
+          })
+        }
+      >
+        {isPending ? "upravuji..." : "Označ jako zaplacené"}
+      </Button>
+    )
+  }
+
+  // Button to mark order as delivered
+  const MarkAsDeliveredButton = () => {
+    const [isPending, startTransition] = useTransition()
+    const { toast } = useToast()
+
+    return (
+      <Button
+        type="button"
+        disabled={isPending}
+        onClick={() =>
+          startTransition(async () => {
+            const res = await deliverOrder(order.id)
+            toast({
+              variant: res.success ? "default" : "destructive",
+              description: res.message,
+            })
+          })
+        }
+      >
+        {isPending ? "upravuji..." : "Označ jako doručené"}
+      </Button>
+    )
+  }
 
   return (
     <>
@@ -128,6 +236,27 @@ const OrderDetailsTable = ({ order }: { order: Order }) => {
                 <div>Celkem</div>
                 <div>{formatCurrency(totalPrice)}</div>
               </div>
+              {/* PayPal Payment */}
+              {!isPaid && paymentMethod === "Paypal" && (
+                <div>
+                  <PayPalScriptProvider
+                    options={{
+                      clientId: paypalClientId,
+                    }}
+                  >
+                    <PrintLoadingState />
+                    <PayPalButtons
+                      createOrder={handleCreatePayPalOrder}
+                      onApprove={handleApprovePayPalOrder}
+                    />
+                  </PayPalScriptProvider>
+                </div>
+              )}
+              {/* Cash On Delivery Payment */}
+              {isAdmin && !isPaid && paymentMethod === "Hotovost" && (
+                <MarkAsPaidButton />
+              )}
+              {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
             </CardContent>
           </Card>
         </div>

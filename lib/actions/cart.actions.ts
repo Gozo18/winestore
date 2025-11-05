@@ -1,7 +1,7 @@
 "use server"
 
 import { CartItem } from "@/types"
-import { formatError, round2 } from "@/lib/utils"
+import { convertToPlainObject, formatError, round2 } from "@/lib/utils"
 import { cookies } from "next/headers"
 import { auth } from "@/auth"
 import { prisma } from "@/db/prisma"
@@ -143,14 +143,14 @@ export async function getMyCart() {
   if (!cart) return undefined
 
   // Convert decimals and return
-  return {
+  return convertToPlainObject({
     ...cart,
     items: cart.items as CartItem[],
     itemsPrice: cart.itemsPrice.toString(),
     totalPrice: cart.totalPrice.toString(),
     shippingPrice: cart.shippingPrice.toString(),
     taxPrice: cart.taxPrice.toString(),
-  }
+  })
 }
 
 // Remove item from cart

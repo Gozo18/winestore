@@ -99,6 +99,11 @@ export const insertOrderSchema = z.object({
   }),
 })
 
+// Schema for updating products
+export const updateProductSchema = insertProductSchema.extend({
+  id: z.string().min(1, "Id je vyžadováno pro aktualizaci produktu."),
+})
+
 // Schema for inserting an order item
 export const insertOrderItemSchema = z.object({
   productId: z.string(),
@@ -107,4 +112,24 @@ export const insertOrderItemSchema = z.object({
   name: z.string(),
   price: currency,
   qty: z.number(),
+})
+
+// Schema for the PayPal paymentResult
+export const paymentResultSchema = z.object({
+  id: z.string(),
+  status: z.string(),
+  email_address: z.string(),
+  pricePaid: z.string(),
+})
+
+// Schema for updating the user profile
+export const updateProfileSchema = z.object({
+  name: z.string().min(3, "Jméno musí mít více než 3 znaky."),
+  email: z.string().min(3, "E-mail musí mít více než 3 znaky."),
+})
+
+// Schema to update users
+export const updateUserSchema = updateProfileSchema.extend({
+  id: z.string().min(1, "ID je vyžadováno pro aktualizaci uživatele."),
+  role: z.string().min(1, "Role je vyžadována."),
 })
