@@ -17,16 +17,11 @@ const Menu = async () => {
 
   return (
     <div className="flex justify-end gap-3">
-      <nav className="hidden md:flex w-full max-w-xs gap-1">
+      <nav className="hidden md:flex w-full gap-1">
         <div className="flex">
           {categories.map((x) => (
-            <Button
-              asChild
-              variant="ghost"
-              key={x.category}
-              className="capitalize"
-            >
-              <Link href={`/search?category=${x}`}>{x.category}</Link>
+            <Button asChild variant="ghost" key={x.category}>
+              <Link href={`/hledat?category=${x.category}`}>{x.category}</Link>
             </Button>
           ))}
         </div>
