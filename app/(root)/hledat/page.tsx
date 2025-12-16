@@ -61,7 +61,7 @@ export async function generateMetadata(props: {
     }
   } else {
     return {
-      title: "Hledat produkty",
+      title: "Naše vína",
     }
   }
 }
