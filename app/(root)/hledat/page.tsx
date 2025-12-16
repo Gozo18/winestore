@@ -1,5 +1,4 @@
 import ProductCard from "@/components/shared/product/product-card"
-import { Button } from "@/components/ui/button"
 import { getAllProducts, getAllCategories } from "@/lib/actions/product.actions"
 import Link from "next/link"
 
@@ -123,11 +122,11 @@ const SearchPage = async (props: {
 
   return (
     <div className="grid md:grid-cols-5 md:gap-5">
-      <div className="filter-links">
+      <div className="filter-links bg-gray-100 mt-10 rounded-lg p-4">
         {/* Category Links */}
-        <div className="text-xl mb-2 mt-3">Kategorie</div>
+        <div className="mb-2">Kategorie</div>
         <div>
-          <ul className="space-y-1">
+          <ul className="space-y-1 text-sm">
             <li>
               <Link
                 className={`${
@@ -135,7 +134,7 @@ const SearchPage = async (props: {
                 }`}
                 href={getFilterUrl({ c: "all" })}
               >
-                Všechny
+                Vše
               </Link>
             </li>
             {categories.map((x) => (
@@ -151,15 +150,15 @@ const SearchPage = async (props: {
           </ul>
         </div>
         {/* Price Links */}
-        <div className="text-xl mb-2 mt-8">Cena</div>
+        <div className="mb-2 mt-8">Cena</div>
         <div>
-          <ul className="space-y-1">
+          <ul className="space-y-1 text-sm">
             <li>
               <Link
                 className={`${price === "all" && "font-bold"}`}
                 href={getFilterUrl({ p: "all" })}
               >
-                Všechny
+                Vše
               </Link>
             </li>
             {prices.map((p) => (
@@ -175,15 +174,15 @@ const SearchPage = async (props: {
           </ul>
         </div>
         {/* Rating Links */}
-        <div className="text-xl mb-2 mt-8">Hodnocení zákazníků</div>
+        <div className="mb-2 mt-8">Hodnocení zákazníků</div>
         <div>
-          <ul className="space-y-1">
+          <ul className="space-y-1 text-sm">
             <li>
               <Link
                 className={`${rating === "all" && "font-bold"}`}
                 href={getFilterUrl({ r: "all" })}
               >
-                Všechny
+                Vše
               </Link>
             </li>
             {ratings.map((r) => (
@@ -200,24 +199,24 @@ const SearchPage = async (props: {
         </div>
       </div>
       <div className="md:col-span-4 space-y-4">
-        <div className="flex-between flex-col md:flex-row my-4">
-          <div className="flex items-center">
+        <div className="flex-between flex-col md:flex-row mb-4">
+          <div className="flex items-center font-bold">
             {q !== "all" && q !== "" && "Hledat: " + q}
             {category !== "all" && category !== "" && " kategorie: " + category}
-            {price !== "all" && " cena: " + price}
+            {price !== "all" && " cena: " + price + " Kč"}
             {rating !== "all" && " hodnocení: " + rating + " hvězd a více"}
             &nbsp;
             {(q !== "all" && q !== "") ||
             (category !== "all" && category !== "") ||
             rating !== "all" ||
             price !== "all" ? (
-              <Button variant={"outline"} asChild>
-                <Link href="/hledat">Zrušit</Link>
-              </Button>
+              <Link href="/hledat" className="ml-4 underline font-normal">
+                zrušit
+              </Link>
             ) : null}
           </div>
-          <div>
-            Řadil podle{" "}
+          <div className="text-sm">
+            Seřazeno podle{" "}
             {sortOrders.map((s) => (
               <Link
                 key={s.value}
