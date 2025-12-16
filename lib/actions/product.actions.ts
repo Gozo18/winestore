@@ -161,6 +161,10 @@ export async function updateProduct(data: z.infer<typeof updateProductSchema>) {
 
     if (!productExists) throw new Error("Produkt nenalezen")
 
+    if (!product.isFeatured) {
+      product.banner = null
+    }
+
     await prisma.product.update({
       where: { id: product.id },
       data: product,
