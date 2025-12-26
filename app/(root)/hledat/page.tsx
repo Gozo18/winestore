@@ -122,7 +122,7 @@ const SearchPage = async (props: {
 
   return (
     <div className="grid md:grid-cols-5 md:gap-5">
-      <div className="filter-links bg-gray-100 mt-10 rounded-lg p-4">
+      <div className="filter-links bg-gray-100 md:mt-10 rounded-lg p-4">
         {/* Category Links */}
         <div className="mb-2">Kategorie</div>
         <div>
@@ -215,7 +215,7 @@ const SearchPage = async (props: {
               </Link>
             ) : null}
           </div>
-          <div className="text-sm">
+          <div className="text-sm flex flex-wrap">
             Seřazeno podle{" "}
             {sortOrders.map((s) => (
               <Link

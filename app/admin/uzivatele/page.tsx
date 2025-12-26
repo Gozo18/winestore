@@ -67,9 +67,18 @@ const AdminUserPage = async (props: {
                 <TableCell>
                   {user.role === "user" ? (
                     <Badge variant="secondary">User</Badge>
-                  ) : (
-                    <Badge variant="default">Admin</Badge>
-                  )}
+                  ) : null}
+                  {user.role === "b2b" ? (
+                    <Badge variant="default">B2B</Badge>
+                  ) : null}
+                  {user.role === "admin" ? (
+                    <Badge
+                      variant="secondary"
+                      className="bg-blue-500 text-white dark:bg-blue-600"
+                    >
+                      Admin
+                    </Badge>
+                  ) : null}
                 </TableCell>
                 <TableCell>
                   <Button asChild variant="outline" size="sm">

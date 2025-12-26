@@ -3,10 +3,14 @@ import Image from "next/image"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import ProductPrice from "./product-price"
 import { Product } from "@/types"
+import AddToCart from "../product/add-to-cart"
+import { getMyCart } from "@/lib/actions/cart.actions"
 
-const ProductCard = ({ product }: { product: Product }) => {
+const ProductCard = async ({ product }: { product: Product }) => {
+  const cart = await getMyCart()
+
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full">
       <CardHeader className="p-0 items-center">
         <Link href={`/produkt/${product.slug}`} className="mt-2">
           <Image
@@ -31,6 +35,21 @@ const ProductCard = ({ product }: { product: Product }) => {
             <p className="text-destructive">Vyprodáno</p>
           )}
         </div>
+        {product.stock > 0 && (
+          <div className="flex-center">
+            <AddToCart
+              cart={cart}
+              item={{
+                productId: product.id,
+                name: product.name,
+                slug: product.slug,
+                price: product.price,
+                qty: 1,
+                image: product.images![0],
+              }}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   )
