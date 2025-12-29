@@ -231,15 +231,7 @@ const SearchPage = async (props: {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {products.data.length === 0 && <div>Žádný produkt nenalezen.</div>}
           {products.data.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={{
-                ...product,
-                alcohol: Number(product.alcohol),
-                sugar: Number(product.sugar),
-                acid: Number(product.acid),
-              }}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>

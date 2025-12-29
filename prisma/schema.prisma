@@ -20,9 +20,9 @@ model Product {
   images      String[]
   brand       String
   description String
-  alcohol     Decimal   @default(0) @db.Decimal(5, 2)
-  sugar       Decimal   @default(0) @db.Decimal(5, 2)
-  acid        Decimal   @default(0) @db.Decimal(5, 2)
+  alcohol     Float     @default(0)
+  sugar       Float     @default(0)
+  acid        Float     @default(0)
   stock       Int
   price       Decimal   @default(0) @db.Decimal(12, 2)
   rating      Decimal   @default(0) @db.Decimal(3, 2)

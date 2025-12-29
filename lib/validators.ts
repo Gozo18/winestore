@@ -22,9 +22,9 @@ export const insertProductSchema = z.object({
   description: z.string().min(3, "Popis musí mít více než 3 znaky."),
   price: currency,
   stock: z.coerce.number().min(0),
-  alcohol: z.coerce.number().min(0),
-  sugar: z.coerce.number().min(0),
-  acid: z.coerce.number().min(0),
+  alcohol: z.coerce.number(),
+  sugar: z.coerce.number(),
+  acid: z.coerce.number(),
   images: z.array(z.string()).min(1, "Musíte vložit alespoň jednu fotku."),
   isFeatured: z.boolean(),
   banner: z.string().nullable(),
@@ -151,5 +151,5 @@ export const insertReviewSchema = z.object({
     .number()
     .int()
     .min(1, "Hodnocení musí být alespoň 1")
-    .max(5, "Hodnocení musí být maximálně 5"),
+    .max(5, "Rating must be at most 5"),
 })
