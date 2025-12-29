@@ -23,9 +23,15 @@ const ProductCard = async ({ product }: { product: Product }) => {
         </Link>
       </CardHeader>
       <CardContent className="p-4 grid gap-4">
-        <div className="text-xs text-center">{product.brand}</div>
+        <div className="text-sm text-center font-cairo">{product.brand}</div>
         <Link href={`/product/${product.slug}`} className="h-12 text-center">
-          <h2 className="font-medium">{product.name}</h2>
+          <h2 className="font-bold font-cairo">
+            {product.sort} {product.year}
+            <br />
+            <span className="font-medium">
+              {product.attribute} {product.sweetCat}
+            </span>
+          </h2>
         </Link>
         <div className="flex-between gap-4">
           <p>{product.rating} hvězd</p>

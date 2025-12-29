@@ -4,6 +4,13 @@ import "@/assets/styles/globals.css"
 import { APP_NAME, APP_DESCRIPTION, SERVER_URL } from "@/lib/constants"
 import { ThemeProvider } from "next-themes"
 import { Toaster } from "@/components/ui/toaster"
+import { Cairo_Play } from "next/font/google"
+
+const cairoPlay = Cairo_Play({
+  subsets: ["latin", "arabic"],
+  variable: "--font-cairo-play",
+  display: "swap",
+})
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="cs" suppressHydrationWarning>
+    <html lang="cs" suppressHydrationWarning className={cairoPlay.variable}>
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider
           attribute="class"

@@ -203,6 +203,164 @@ const ProductForm = ({
           />
         </div>
         <div className="flex flex-col md:flex-row gap-5">
+          {/* Sort */}
+          <FormField
+            control={form.control}
+            name="sort"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof insertProductSchema>,
+                "sort"
+              >
+            }) => (
+              <FormItem className="w-full">
+                <FormLabel>Odrůda</FormLabel>
+                <FormControl>
+                  <Input placeholder="Zadejte odrůdu produktu" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Year */}
+          <FormField
+            control={form.control}
+            name="year"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof insertProductSchema>,
+                "year"
+              >
+            }) => (
+              <FormItem className="w-full">
+                <FormLabel>Rok</FormLabel>
+                <FormControl>
+                  <Input placeholder="Zadejte rok produktu" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex flex-col md:flex-row gap-5">
+          {/* Attribute */}
+          <FormField
+            control={form.control}
+            name="attribute"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof insertProductSchema>,
+                "attribute"
+              >
+            }) => (
+              <FormItem className="w-full">
+                <FormLabel>Přívlastek</FormLabel>
+                <FormControl>
+                  <Input placeholder="Zadejte přívlastek produktu" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* SweetCat */}
+          <FormField
+            control={form.control}
+            name="sweetCat"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof insertProductSchema>,
+                "sweetCat"
+              >
+            }) => (
+              <FormItem className="w-full">
+                <FormLabel>Sladkost</FormLabel>
+                <FormControl>
+                  <Input placeholder="Zadejte sladkost produktu" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex flex-col md:flex-row gap-5">
+          {/* Alcohol */}
+          <FormField
+            control={form.control}
+            name="alcohol"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof insertProductSchema>,
+                "alcohol"
+              >
+            }) => (
+              <FormItem className="w-full">
+                <FormLabel>Alkohol</FormLabel>
+                <FormControl>
+                  <Input placeholder="Zadejte alkohol produktu" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Sugar */}
+          <FormField
+            control={form.control}
+            name="sugar"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof insertProductSchema>,
+                "sugar"
+              >
+            }) => (
+              <FormItem className="w-full">
+                <FormLabel>Zbytkový cukr</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Zadejte zbytkový cukr produktu"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex flex-col md:flex-row gap-5">
+          {/* Acid */}
+          <FormField
+            control={form.control}
+            name="acid"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof insertProductSchema>,
+                "acid"
+              >
+            }) => (
+              <FormItem className="w-full">
+                <FormLabel>Kyselina</FormLabel>
+                <FormControl>
+                  <Input placeholder="Zadejte kyselinu produktu" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex flex-col md:flex-row gap-5">
           {/* Price */}
           <FormField
             control={form.control}

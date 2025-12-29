@@ -17,6 +17,10 @@ const ProductDetailsPage = async (props: {
 
   const cart = await getMyCart()
 
+  const alcohol = Number(product.alcohol)
+  const sugar = Number(product.sugar)
+  const acid = Number(product.acid)
+
   return (
     <>
       <section>
@@ -32,39 +36,58 @@ const ProductDetailsPage = async (props: {
           {/* Details */}
           <div className="col-span-2 p-5">
             <div className="flex flex-col gap-6">
-              <p>
-                {product.brand} {product.category}
+              <p className="font-cairo">
+                {product.brand} - {product.category}
               </p>
-              <h1 className="h3-bold">{product.name}</h1>
+              <h1 className="h3-bold font-cairo">
+                {product.sort} {product.year} <br />{" "}
+                <span className="font-medium">
+                  {product.attribute} {product.sweetCat}
+                </span>
+              </h1>
               <p>
                 {product.rating} z {product.numReviews} hodnocení
               </p>
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <ProductPrice
                   value={Number(product.price)}
-                  className="w-32 rounded-full bg-green-100 text-green-700 px-5 py-2 text-center"
+                  className="w-40 rounded-full bg-[#72bf80] text-white px-5 py-2 text-center"
                 />
               </div>
             </div>
-            <div className="mt-10">
+            <div className="mt-6">
               <p className="font-semibold">Popis</p>
-              <p>{product.description}</p>
+              <p className="mt-4">
+                Alkohol: <span className="font-semibold">{alcohol}%</span>
+              </p>
+              <p>
+                Zbytkový cukr: <span className="font-semibold">{sugar}g</span>
+              </p>
+              <p>
+                Kyselinky: <span className="font-semibold">{acid}g</span>
+              </p>
+              <p className="my-4">{product.description}</p>
             </div>
           </div>
           {/* Actions */}
-          <div>
+          <div className="lg:mt-5">
             <Card>
               <CardContent className="p-4">
-                <div className="mb-2 flex justify-between">
+                <div className="mb-4 flex justify-between">
                   <div>Cena</div>
                   <div>
                     <ProductPrice value={Number(product.price)} />
                   </div>
                 </div>
-                <div className="mb-2 flex justify-between">
+                <div className="mb-4 flex justify-between">
                   <div>Dostupnost</div>
                   {product.stock > 0 ? (
-                    <Badge variant="outline">Skladem</Badge>
+                    <Badge
+                      variant="secondary"
+                      className="bg-[#72bf80] text-white dark:bg-[#72bf80]"
+                    >
+                      Skladem
+                    </Badge>
                   ) : (
                     <Badge variant="destructive">Není skladem</Badge>
                   )}

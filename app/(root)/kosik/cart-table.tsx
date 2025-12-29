@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { useTransition } from "react"
 import { addItemToCart, removeItemFromCart } from "@/lib/actions/cart.actions"
-import { ArrowRight, Loader, Minus, Plus } from "lucide-react"
+import { ArrowRight, Loader, Minus, Plus, ShoppingCart } from "lucide-react"
 import { Cart } from "@/types"
 import Link from "next/link"
 import Image from "next/image"
@@ -27,10 +27,14 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
 
   return (
     <>
-      <h1 className="py-4 h2-bold">Nákupní košík</h1>
+      <h1 className="py-4 h2-bold text-center">Nákupní košík</h1>
       {!cart || cart.items.length === 0 ? (
-        <div>
-          Košík je prázdný. <Link href="/">Pokračovat v nákupu</Link>
+        <div className="flex flex-col items-center gap-6">
+          <ShoppingCart className="mt-6 w-10 h-10" />
+          Košík je prázdný.{" "}
+          <Link href="/hledat" className="underline">
+            Pokračovat v nákupu.
+          </Link>
         </div>
       ) : (
         <div className="grid lg:grid-cols-4">
@@ -122,11 +126,19 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
           </div>
           <Card className="mt-8 lg:mt-0">
             <CardContent className="p-4 gap-4">
-              <div className="pb-3 lg:text-xl">
-                Celkem ({cart.items.reduce((a, b) => a + b.qty, 0)} ks):{" "}
-                <span className="font-bold">
-                  {formatCurrency(cart.itemsPrice)}
-                </span>
+              <div className="pb-8 lg:text-lg">
+                <p className="flex justify-between">
+                  <span className="flex items-end text-sm">Celkem kusů:</span>{" "}
+                  <span className="font-medium">
+                    {cart.items.reduce((a, b) => a + b.qty, 0)}
+                  </span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="flex items-end text-sm">Cena celkem:</span>{" "}
+                  <span className="font-medium">
+                    {formatCurrency(cart.itemsPrice)}
+                  </span>
+                </p>
               </div>
               <Button
                 className="w-full"

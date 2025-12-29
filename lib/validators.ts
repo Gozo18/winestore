@@ -13,11 +13,18 @@ const currency = z
 export const insertProductSchema = z.object({
   name: z.string().min(3, "Jméno musí mít více než 3 znaky."),
   slug: z.string().min(3, "Slug musí mít více než 3 znaky."),
+  sort: z.string().min(3, "Odrůda musí mít více než 3 znaky."),
+  year: z.string().min(4, "Rok musí mít 4 číslice."),
+  attribute: z.string(),
+  sweetCat: z.string().min(3, "Sladkost musí mít více než 3 znaky."),
   category: z.string().min(3, "Kategorie musí mít více než 3 znaky."),
   brand: z.string().min(3, "Značka musí mít více než 3 znaky."),
   description: z.string().min(3, "Popis musí mít více než 3 znaky."),
   price: currency,
   stock: z.coerce.number().min(0),
+  alcohol: z.coerce.number().min(0),
+  sugar: z.coerce.number().min(0),
+  acid: z.coerce.number().min(0),
   images: z.array(z.string()).min(1, "Musíte vložit alespoň jednu fotku."),
   isFeatured: z.boolean(),
   banner: z.string().nullable(),
@@ -132,4 +139,17 @@ export const updateProfileSchema = z.object({
 export const updateUserSchema = updateProfileSchema.extend({
   id: z.string().min(1, "ID je vyžadováno pro aktualizaci uživatele."),
   role: z.string().min(1, "Role je vyžadována."),
+})
+
+// Schema to insert reviews
+export const insertReviewSchema = z.object({
+  title: z.string().min(3, "Název musí mít alespoň 3 znaky."),
+  description: z.string().min(3, "Popis musí mít alespoň 3 znaky."),
+  productId: z.string().min(1, "Produkt je vyžadován."),
+  userId: z.string().min(1, "Uživatel je vyžadován."),
+  rating: z.coerce
+    .number()
+    .int()
+    .min(1, "Hodnocení musí být alespoň 1")
+    .max(5, "Hodnocení musí být maximálně 5"),
 })
