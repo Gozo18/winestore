@@ -1,5 +1,15 @@
 import ProductCard from "@/components/shared/product/product-card"
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import {
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { getAllProducts, getAllCategories } from "@/lib/actions/product.actions"
+import { DropdownMenu } from "@radix-ui/react-dropdown-menu"
+import { ChevronDownIcon } from "lucide-react"
 import Link from "next/link"
 
 const prices = [
@@ -25,6 +35,8 @@ const ratings = [4, 3, 2, 1]
 
 const sortOrders = [
   { value: "newest", name: "nejnovější" },
+  { value: "sugar-low", name: "nejsušší" },
+  { value: "sugar-high", name: "nejsladší" },
   { value: "lowest", name: "nejlevnější" },
   { value: "highest", name: "nejdražší" },
   { value: "rating", name: "hodnocení" },
@@ -121,13 +133,13 @@ const SearchPage = async (props: {
   const categories = await getAllCategories()
 
   return (
-    <div className="grid md:grid-cols-5 md:gap-5">
-      <div className="filter-links bg-gray-100 md:mt-10 rounded-lg p-4">
+    <div className="grid lg:grid-cols-5 lg:gap-5">
+      <div className="filter-links bg-gray-100 rounded-lg p-4">
         {/* Category Links */}
         <div className="mb-2">Kategorie</div>
         <div>
-          <ul className="space-y-1 text-sm">
-            <li>
+          <ul className="flex justify-between lg:block lg:space-y-1 text-sm flex-wrap">
+            <li className="min-w-24 mb-4 lg:mb-0">
               <Link
                 className={`${
                   (category === "all" || category === "") && "font-bold"
@@ -138,7 +150,7 @@ const SearchPage = async (props: {
               </Link>
             </li>
             {categories.map((x) => (
-              <li key={x.category}>
+              <li key={x.category} className="min-w-24 mb-4 md:mb-0">
                 <Link
                   className={`${category === x.category && "font-bold"}`}
                   href={getFilterUrl({ c: x.category })}
@@ -150,8 +162,8 @@ const SearchPage = async (props: {
           </ul>
         </div>
         {/* Price Links */}
-        <div className="mb-2 mt-8">Cena</div>
-        <div>
+        <div className="hidden lg:block mb-2 mt-8">Cena</div>
+        <div className="hidden  lg:block">
           <ul className="space-y-1 text-sm">
             <li>
               <Link
@@ -174,8 +186,8 @@ const SearchPage = async (props: {
           </ul>
         </div>
         {/* Rating Links */}
-        <div className="mb-2 mt-8">Hodnocení zákazníků</div>
-        <div>
+        <div className="hidden  lg:block mb-2 mt-8">Hodnocení zákazníků</div>
+        <div className="hidden  lg:block">
           <ul className="space-y-1 text-sm">
             <li>
               <Link
@@ -198,13 +210,26 @@ const SearchPage = async (props: {
           </ul>
         </div>
       </div>
-      <div className="md:col-span-4 space-y-4">
-        <div className="flex-between flex-col md:flex-row mb-4">
-          <div className="flex items-center font-bold">
+      <div className="lg:col-span-4 space-y-4">
+        <div className="flex-between my-4">
+          <div className="flex items-center text-xs flex-wrap gap-1 mr-4">
             {q !== "all" && q !== "" && "Hledat: " + q}
-            {category !== "all" && category !== "" && " kategorie: " + category}
-            {price !== "all" && " cena: " + price + " Kč"}
-            {rating !== "all" && " hodnocení: " + rating + " hvězd a více"}
+            {category !== "all" && category !== "" && (
+              <>
+                kategorie: <span className="font-bold ml-1">{category}</span>
+              </>
+            )}
+            {price !== "all" && (
+              <>
+                cena: <span className="font-bold ml-1">{price} Kč</span>
+              </>
+            )}
+            {rating !== "all" && (
+              <>
+                hodnocení:{" "}
+                <span className="font-bold ml-1">{rating} hvězd a více</span>
+              </>
+            )}
             &nbsp;
             {(q !== "all" && q !== "") ||
             (category !== "all" && category !== "") ||
@@ -216,16 +241,61 @@ const SearchPage = async (props: {
             ) : null}
           </div>
           <div className="text-sm flex flex-wrap">
-            Seřazeno podle{" "}
-            {sortOrders.map((s) => (
-              <Link
-                key={s.value}
-                className={`mx-2 ${sort == s.value && "font-bold"}`}
-                href={getFilterUrl({ s: s.value })}
-              >
-                {s.name}
-              </Link>
-            ))}
+            <div className="hidden lg:block">
+              <ButtonGroup>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs hover:bg-white cursor-default"
+                >
+                  Řadit podle:
+                </Button>
+                {sortOrders.map((s) => (
+                  <Button variant="outline" size="sm" asChild key={s.value}>
+                    <Link
+                      className={`text-xs ${
+                        sort == s.value &&
+                        "font-bold bg-black text-white hover:bg-black hover:text-white"
+                      }`}
+                      href={getFilterUrl({ s: s.value })}
+                    >
+                      {s.name}
+                    </Link>
+                  </Button>
+                ))}
+              </ButtonGroup>
+            </div>
+            <div className="lg:hidden">
+              <ButtonGroup>
+                <Button variant="outline" size="sm">
+                  Řadit podle:
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="!pl-2">
+                      <ChevronDownIcon />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="[--radius:1rem]">
+                    <DropdownMenuGroup>
+                      {sortOrders.map((s) => (
+                        <DropdownMenuItem asChild key={s.value}>
+                          <Link
+                            className={`text-xs ${
+                              sort == s.value &&
+                              "font-bold bg-black text-white hover:bg-black hover:text-white"
+                            }`}
+                            href={getFilterUrl({ s: s.value })}
+                          >
+                            {s.name}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </ButtonGroup>
+            </div>
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
