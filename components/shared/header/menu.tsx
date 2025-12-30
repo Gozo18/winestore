@@ -13,6 +13,7 @@ import UserButton from "./user-button"
 import { getAllCategories } from "@/lib/actions/product.actions"
 import { getMyCart } from "@/lib/actions/cart.actions"
 import { Badge } from "@/components/ui/badge"
+import UserButtonMobile from "./user-button-mobile"
 
 const Menu = async () => {
   const categories = await getAllCategories()
@@ -71,7 +72,7 @@ const Menu = async () => {
           </SheetTrigger>
           <SheetContent className="flex flex-col items-start">
             <SheetTitle>Menu</SheetTitle>
-            <UserButton />
+            <UserButtonMobile />
             <SheetDescription></SheetDescription>
           </SheetContent>
         </Sheet>
