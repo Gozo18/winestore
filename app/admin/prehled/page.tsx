@@ -14,6 +14,7 @@ import { Metadata } from "next"
 import Link from "next/link"
 import Charts from "./charts"
 import { requireAdmin } from "@/lib/auth-guard"
+import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
   title: "Přehled - Admin",
@@ -30,11 +31,13 @@ const AdminOverviewPage = async () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Celkový obrat</CardTitle>
+            <CardTitle className="text-sm md:text-lg font-medium">
+              Celkový obrat
+            </CardTitle>
             <BadgeDollarSign />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-lg md:text-2xl font-bold">
               {formatCurrency(
                 summary.totalSales._sum.totalPrice?.toString() || 0
               )}
@@ -43,42 +46,50 @@ const AdminOverviewPage = async () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Prodeje</CardTitle>
+            <CardTitle className="text-sm md:text-lg font-medium">
+              Prodeje
+            </CardTitle>
             <CreditCard />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-lg md:text-2xl font-bold">
               {formatNumber(summary.ordersCount)}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Zákazníci</CardTitle>
+            <CardTitle className="text-sm md:text-lg font-medium">
+              Zákazníci
+            </CardTitle>
             <Users />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-lg md:text-2xl font-bold">
               {formatNumber(summary.usersCount)}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Produkty</CardTitle>
+            <CardTitle className="text-sm md:text-lg font-medium">
+              Produkty
+            </CardTitle>
             <Barcode />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-lg md:text-2xl font-bold">
               {formatNumber(summary.productsCount)}
             </div>
           </CardContent>
         </Card>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="md:grid md:gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="w-full md:w-auto md:col-span-4 my-4 md:my-0">
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
+            <CardTitle className="text-sm md:text-lg font-medium">
+              Přehled
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <Charts
@@ -88,9 +99,11 @@ const AdminOverviewPage = async () => {
             />
           </CardContent>
         </Card>
-        <Card className="col-span-3">
+        <Card className="md:col-span-3">
           <CardHeader>
-            <CardTitle>Poslední objednávky</CardTitle>
+            <CardTitle className="text-sm md:text-lg font-medium">
+              Poslední objednávky
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -113,9 +126,11 @@ const AdminOverviewPage = async () => {
                     </TableCell>
                     <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
                     <TableCell>
-                      <Link href={`/moje-objednavky/${order.id}`}>
-                        <span className="px-2">Detail</span>
-                      </Link>
+                      <Button asChild>
+                        <Link href={`/moje-objednavky/${order.id}`}>
+                          Detail
+                        </Link>
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

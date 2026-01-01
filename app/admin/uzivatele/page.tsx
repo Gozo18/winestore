@@ -69,7 +69,12 @@ const AdminUserPage = async (props: {
                     <Badge variant="secondary">User</Badge>
                   ) : null}
                   {user.role === "b2b" ? (
-                    <Badge variant="default">B2B</Badge>
+                    <Badge
+                      variant="secondary"
+                      className="bg-orange-500 text-white dark:bg-orange-600"
+                    >
+                      B2B
+                    </Badge>
                   ) : null}
                   {user.role === "admin" ? (
                     <Badge
@@ -80,8 +85,8 @@ const AdminUserPage = async (props: {
                     </Badge>
                   ) : null}
                 </TableCell>
-                <TableCell>
-                  <Button asChild variant="outline" size="sm">
+                <TableCell className="flex">
+                  <Button asChild size="sm">
                     <Link href={`/admin/uzivatele/${user.id}`}>Upravit</Link>
                   </Button>
                   <DeleteDialog id={user.id} action={deleteUser} />

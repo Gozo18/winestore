@@ -52,7 +52,6 @@ const Menu = async () => {
         <UserButton />
       </nav>
       <nav className="lg:hidden">
-        <ModeToggle />
         <Button asChild variant="ghost" className="px-0 py-4 ml-4">
           <Link href="/kosik">
             <ShoppingCart /> Košík

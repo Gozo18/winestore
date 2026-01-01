@@ -78,8 +78,8 @@ const AdminOrdersPage = async (props: {
                     ? formatDateTime(order.deliveredAt).dateTime
                     : "Nedoručeno"}
                 </TableCell>
-                <TableCell>
-                  <Button asChild variant="outline" size="sm">
+                <TableCell className="flex">
+                  <Button asChild size="sm">
                     <Link href={`/moje-objednavky/${order.id}`}>Detail</Link>
                   </Button>
                   <DeleteDialog id={order.id} action={deleteOrder} />

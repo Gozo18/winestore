@@ -141,17 +141,21 @@ const OrderDetailsTable = ({
 
   return (
     <>
-      <h1 className="py-4 text-2xl">
-        Objednávka {formatId(id)} ze dne {formatDateTime(createdAt!).dateTime}
+      <h1 className="py-4 text-lg md:text-2xl font-semibold">
+        Objednávka {formatId(id)} <br /> ze dne{" "}
+        {formatDateTime(createdAt!).dateTime}
       </h1>
       <div className="grid md:grid-cols-3 md:gap-5">
-        <div className="col-span-2 space-4-y overlow-x-auto">
+        <div className="md:col-span-2 space-4-y overlow-x-auto">
           <Card>
             <CardContent className="p-4 gap-4">
-              <h2 className="text-xl pb-4">Platební metoda</h2>
-              <p className="mb-2">{paymentMethod}</p>
+              <h2 className="text-lg md:text-xl pb-4">Platební metoda</h2>
+              <p className="mb-2 text-sm md:text-base">{paymentMethod}</p>
               {isPaid ? (
-                <Badge variant="secondary">
+                <Badge
+                  variant="secondary"
+                  className="bg-[#72bf80] text-white dark:bg-[#72bf80]"
+                >
                   Zaplaceno dne {formatDateTime(paidAt!).dateTime}
                 </Badge>
               ) : (
@@ -161,14 +165,17 @@ const OrderDetailsTable = ({
           </Card>
           <Card className="my-2">
             <CardContent className="p-4 gap-4">
-              <h2 className="text-xl pb-4">Dodací adresa</h2>
-              <p>{shippingAddress.fullName}</p>
-              <p className="mb-2">
+              <h2 className="text-lg md:text-xl pb-4">Dodací adresa</h2>
+              <p className="text-sm md:text-base">{shippingAddress.fullName}</p>
+              <p className="mb-2 text-sm md:text-base">
                 {shippingAddress.streetAddress}, {shippingAddress.city}
                 {shippingAddress.postalCode}, {shippingAddress.country}
               </p>
               {isDelivered ? (
-                <Badge variant="secondary">
+                <Badge
+                  variant="secondary"
+                  className="bg-[#72bf80] text-white dark:bg-[#72bf80]"
+                >
                   Doručeno dne {formatDateTime(deliveredAt!).dateTime}
                 </Badge>
               ) : (
@@ -178,8 +185,8 @@ const OrderDetailsTable = ({
           </Card>
           <Card>
             <CardContent className="p-4 gap-4">
-              <h2 className="text-xl pb-4">Objednané položky</h2>
-              <Table>
+              <h2 className="text-lg md:text-xl pb-4">Objednané položky</h2>
+              <Table className="text-xs md:text-base">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Položka</TableHead>
@@ -217,9 +224,9 @@ const OrderDetailsTable = ({
             </CardContent>
           </Card>
         </div>
-        <div>
-          <Card>
-            <CardContent className="p-4 gap-4 space-y-4">
+        <div className="mt-2 md:mt-0 w-full md:w-auto">
+          <Card className="w-full md:w-auto">
+            <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
               <div className="flex justify-between">
                 <div>Položky</div>
                 <div>{formatCurrency(itemsPrice)}</div>
@@ -234,7 +241,9 @@ const OrderDetailsTable = ({
               </div>
               <div className="flex justify-between">
                 <div>Celkem</div>
-                <div>{formatCurrency(totalPrice)}</div>
+                <div className="font-semibold">
+                  {formatCurrency(totalPrice)}
+                </div>
               </div>
               {/* PayPal Payment */}
               {!isPaid && paymentMethod === "Paypal" && (

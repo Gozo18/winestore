@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import Pagination from "@/components/shared/pagination"
+import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
   title: "Moje objednávky",
@@ -27,9 +28,9 @@ const OrdersPage = async (props: {
 
   return (
     <div className="space-y-2">
-      <h2 className="h2-bold">Moje objednávky</h2>
+      <h2 className="h2-bold text-lg md:text-xl">Moje objednávky</h2>
       <div className="overflow-x-auto">
-        <Table>
+        <Table className="text-xs md:text-base">
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
@@ -59,9 +60,9 @@ const OrdersPage = async (props: {
                     : "Nedoručeno"}
                 </TableCell>
                 <TableCell>
-                  <Link href={`/moje-objednavky/${order.id}`}>
-                    <span className="px-2">Detail</span>
-                  </Link>
+                  <Button asChild>
+                    <Link href={`/moje-objednavky/${order.id}`}>Detail</Link>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
