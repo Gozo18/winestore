@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { formatId } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Pagination from "@/components/shared/pagination"
@@ -49,19 +48,17 @@ const AdminUserPage = async (props: {
       </div>
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader>
+          <TableHeader className="text-xs md:text-base">
             <TableRow>
-              <TableHead>ID</TableHead>
               <TableHead>JMÉNO</TableHead>
               <TableHead>E-MAIL</TableHead>
               <TableHead>ROLE</TableHead>
               <TableHead>MOŽNOSTI</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="text-xs md:text-base">
             {users.data.map((user) => (
               <TableRow key={user.id}>
-                <TableCell>{formatId(user.id)}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>

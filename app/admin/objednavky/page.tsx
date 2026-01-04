@@ -48,7 +48,7 @@ const AdminOrdersPage = async (props: {
       </div>
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader>
+          <TableHeader className="text-xs md:text-base">
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>DATUM</TableHead>
@@ -59,7 +59,7 @@ const AdminOrdersPage = async (props: {
               <TableHead>MOŽNOSTI</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="text-xs md:text-base">
             {orders.data.map((order) => (
               <TableRow key={order.id}>
                 <TableCell>{formatId(order.id)}</TableCell>

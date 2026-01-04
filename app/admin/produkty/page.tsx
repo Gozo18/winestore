@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { getAllProducts, deleteProduct } from "@/lib/actions/product.actions"
-import { formatCurrency, formatId } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -62,9 +62,8 @@ const AdminProductsPage = async (props: {
       </div>
 
       <Table>
-        <TableHeader>
+        <TableHeader className="text-xs md:text-base">
           <TableRow>
-            <TableHead>ID</TableHead>
             <TableHead>NÁZEV</TableHead>
             <TableHead className="text-right">CENA</TableHead>
             <TableHead>KATEGORIE</TableHead>
@@ -73,10 +72,9 @@ const AdminProductsPage = async (props: {
             <TableHead className="w-[100px]">MOŽNOSTI</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className="text-xs md:text-base">
           {products.data.map((product) => (
             <TableRow key={product.id}>
-              <TableCell>{formatId(product.id)}</TableCell>
               <TableCell>{product.name}</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(product.price)}

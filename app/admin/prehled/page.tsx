@@ -107,7 +107,7 @@ const AdminOverviewPage = async () => {
           </CardHeader>
           <CardContent>
             <Table>
-              <TableHeader>
+              <TableHeader className="text-xs md:text-base">
                 <TableRow>
                   <TableHead>ZÁKAZNÍK</TableHead>
                   <TableHead>DATUM</TableHead>
@@ -115,7 +115,7 @@ const AdminOverviewPage = async () => {
                   <TableHead>MOŽNOSTI</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="text-xs md:text-base">
                 {summary.latestSales.map((order) => (
                   <TableRow key={order.id}>
                     <TableCell>

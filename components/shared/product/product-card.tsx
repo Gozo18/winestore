@@ -19,6 +19,15 @@ const ProductCard = async ({ product }: { product: Product }) => {
             width={300}
             height={300}
             priority={true}
+            className="hidden lg:block"
+          />
+          <Image
+            src={product.images[0]}
+            alt={product.name}
+            width={150}
+            height={150}
+            priority={true}
+            className="lg:hidden"
           />
         </Link>
       </CardHeader>
