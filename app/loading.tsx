@@ -1,5 +1,4 @@
-import Image from "next/image"
-import loader from "@/assets/loader.gif"
+import { Spinner } from "@/components/ui/spinner"
 
 const Loading = () => {
   return (
@@ -12,7 +11,7 @@ const Loading = () => {
         width: "100vw",
       }}
     >
-      <Image src={loader} height={70} width={70} alt="Loading..." />
+      <Spinner className="size-8" />
     </div>
   )
 }

@@ -26,11 +26,19 @@ const OrderDetailsPage = async (props: {
 
   return (
     <>
-      <Button variant="link">
-        <Link href="/uzivatel/objednavky" className="flex">
-          <ArrowLeft className="mt-[2px] mr-2" /> zpět na moje objednávky
-        </Link>
-      </Button>
+      {session?.user?.role === "admin" ? (
+        <Button variant="link">
+          <Link href="/admin/objednavky" className="flex">
+            <ArrowLeft className="mt-[2px] mr-2" /> zpět na admin objednávky
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="link">
+          <Link href="/uzivatel/objednavky" className="flex">
+            <ArrowLeft className="mt-[2px] mr-2" /> zpět na moje objednávky
+          </Link>
+        </Button>
+      )}
       <OrderDetailsTable
         order={{
           ...order,
