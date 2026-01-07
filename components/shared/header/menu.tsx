@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button"
+import { auth } from "@/auth"
 import ModeToggle from "./mode-toggle"
 import Link from "next/link"
-import { EllipsisVertical, ShoppingCart } from "lucide-react"
+import { ShoppingCart, House, UserIcon, CircleUser } from "lucide-react"
 import {
   Sheet,
   SheetContent,
@@ -10,13 +11,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import UserButton from "./user-button"
-import { getAllCategories } from "@/lib/actions/product.actions"
 import { getMyCart } from "@/lib/actions/cart.actions"
 import { Badge } from "@/components/ui/badge"
 import UserButtonMobile from "./user-button-mobile"
 
 const Menu = async () => {
-  const categories = await getAllCategories()
+  const session = await auth()
   const cart = await getMyCart()
 
   const totalItemsInCart =
@@ -27,18 +27,13 @@ const Menu = async () => {
       <nav className="hidden lg:flex w-full gap-1">
         <div className="flex">
           <Button asChild variant="ghost">
-            <Link href={`/hledat`}>vše</Link>
+            <Link href={`/hledat`}>naše vína</Link>
           </Button>
-          {categories.map((x) => (
-            <Button asChild variant="ghost" key={x.category}>
-              <Link href={`/hledat?category=${x.category}`}>{x.category}</Link>
-            </Button>
-          ))}
         </div>
         <ModeToggle />
         <Button asChild variant="ghost">
           <Link href="/kosik">
-            <ShoppingCart /> Košík
+            <ShoppingCart /> košík
             {cart?.items && cart.items.length > 0 && (
               <Badge
                 className="h-5 min-w-5 rounded-full px-[5px] font-mono tabular-nums"
@@ -52,29 +47,54 @@ const Menu = async () => {
         <UserButton />
       </nav>
       <nav className="lg:hidden">
-        <Button asChild variant="ghost" className="px-0 py-4 ml-4">
-          <Link href="/kosik">
-            <ShoppingCart /> Košík
-            {cart?.items && cart.items.length > 0 && (
-              <Badge
-                className="h-5 min-w-5 rounded-full px-[5px] font-mono tabular-nums"
-                variant="destructive"
-              >
-                {totalItemsInCart}
-              </Badge>
-            )}
-          </Link>
-        </Button>
-        <Sheet>
-          <SheetTrigger className="align-middle ml-4 mb-2">
-            <EllipsisVertical />
-          </SheetTrigger>
-          <SheetContent className="flex flex-col items-start">
-            <SheetTitle>Menu</SheetTitle>
-            <UserButtonMobile />
-            <SheetDescription></SheetDescription>
-          </SheetContent>
-        </Sheet>
+        <div className="fixed bottom-0 right-0 flex items-center justify-between w-full h-12 px-3 bg-black text-white z-10">
+          <div>
+            <Button asChild variant="ghost">
+              <Link href={`/`}>
+                <House />
+                domů
+              </Link>
+            </Button>
+          </div>
+          <div className="flex">
+            <Button asChild variant="ghost">
+              <Link href={`/hledat`}>naše vína</Link>
+            </Button>
+            <Button asChild variant="ghost" className="ml-2">
+              <Link href="/kosik">
+                <ShoppingCart /> Košík
+                {cart?.items && cart.items.length > 0 && (
+                  <Badge
+                    className="h-5 min-w-5 rounded-full px-[5px] font-mono tabular-nums"
+                    variant="destructive"
+                  >
+                    {totalItemsInCart}
+                  </Badge>
+                )}
+              </Link>
+            </Button>
+          </div>
+        </div>
+        {!session ? (
+          <Button asChild>
+            <Link href="/prihlaseni">
+              <UserIcon /> Přihlásit
+            </Link>
+          </Button>
+        ) : (
+          <Sheet>
+            <SheetTrigger className="align-middle" asChild>
+              <Button aria-label="Uživatelské menu" size="sm">
+                <CircleUser /> menu
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="flex flex-col items-start">
+              <SheetTitle>Menu</SheetTitle>
+              <UserButtonMobile />
+              <SheetDescription></SheetDescription>
+            </SheetContent>
+          </Sheet>
+        )}
       </nav>
     </div>
   )

@@ -5,7 +5,7 @@ const Footer = () => {
 
   return (
     <footer className="border-t">
-      <div className="p-5 flex-center">
+      <div className="mb-16 md:mb-8 p-5 flex-center">
         {currentYear} &copy; {APP_NAME}
       </div>
     </footer>
