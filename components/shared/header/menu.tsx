@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
 import { auth } from "@/auth"
-import ModeToggle from "./mode-toggle"
 import Link from "next/link"
 import { ShoppingCart, House, UserIcon, CircleUser, Grape } from "lucide-react"
 import {
@@ -27,14 +26,13 @@ const Menu = async () => {
       <nav className="hidden lg:flex w-full gap-1">
         <div className="flex">
           <Button asChild variant="ghost">
-            <Link href={`/hledat`}>
+            <Link href={`/hledat`} className="font-normal">
               <Grape /> naše vína
             </Link>
           </Button>
         </div>
-        <ModeToggle />
         <Button asChild variant="ghost">
-          <Link href="/kosik">
+          <Link href="/kosik" className="font-normal">
             <ShoppingCart /> košík
             {cart?.items && cart.items.length > 0 && (
               <Badge
@@ -52,7 +50,7 @@ const Menu = async () => {
         <div className="fixed bottom-0 right-0 flex items-center justify-between w-full h-16 px-3 bg-black text-white z-10">
           <div>
             <Button asChild variant="ghost">
-              <Link href={`/`}>
+              <Link href={`/`} className="font-normal">
                 <House />
                 domů
               </Link>
@@ -60,13 +58,13 @@ const Menu = async () => {
           </div>
           <div className="flex">
             <Button asChild variant="ghost">
-              <Link href={`/hledat`}>
+              <Link href={`/hledat`} className="font-normal">
                 <Grape /> naše vína
               </Link>
             </Button>
             <Button asChild variant="ghost" className="ml-2">
-              <Link href="/kosik">
-                <ShoppingCart /> Košík
+              <Link href="/kosik" className="font-normal">
+                <ShoppingCart /> košík
                 {cart?.items && cart.items.length > 0 && (
                   <Badge
                     className="h-5 min-w-5 rounded-full px-[5px] font-mono tabular-nums"
