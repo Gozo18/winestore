@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { auth } from "@/auth"
 import ModeToggle from "./mode-toggle"
 import Link from "next/link"
-import { ShoppingCart, House, UserIcon, CircleUser } from "lucide-react"
+import { ShoppingCart, House, UserIcon, CircleUser, Grape } from "lucide-react"
 import {
   Sheet,
   SheetContent,
@@ -27,7 +27,9 @@ const Menu = async () => {
       <nav className="hidden lg:flex w-full gap-1">
         <div className="flex">
           <Button asChild variant="ghost">
-            <Link href={`/hledat`}>naše vína</Link>
+            <Link href={`/hledat`}>
+              <Grape /> naše vína
+            </Link>
           </Button>
         </div>
         <ModeToggle />
@@ -47,7 +49,7 @@ const Menu = async () => {
         <UserButton />
       </nav>
       <nav className="lg:hidden">
-        <div className="fixed bottom-0 right-0 flex items-center justify-between w-full h-12 px-3 bg-black text-white z-10">
+        <div className="fixed bottom-0 right-0 flex items-center justify-between w-full h-16 px-3 bg-black text-white z-10">
           <div>
             <Button asChild variant="ghost">
               <Link href={`/`}>
@@ -58,7 +60,9 @@ const Menu = async () => {
           </div>
           <div className="flex">
             <Button asChild variant="ghost">
-              <Link href={`/hledat`}>naše vína</Link>
+              <Link href={`/hledat`}>
+                <Grape /> naše vína
+              </Link>
             </Button>
             <Button asChild variant="ghost" className="ml-2">
               <Link href="/kosik">
