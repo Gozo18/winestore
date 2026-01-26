@@ -36,7 +36,7 @@ const Menu = async () => {
             <ShoppingCart /> košík
             {cart?.items && cart.items.length > 0 && (
               <Badge
-                className="h-5 min-w-5 rounded-full px-[5px] font-mono tabular-nums"
+                className="flex justify-center items-center h-5 min-w-5 rounded-full px-[5px] font-mono tabular-nums"
                 variant="destructive"
               >
                 {totalItemsInCart}
@@ -67,7 +67,7 @@ const Menu = async () => {
                 <ShoppingCart /> košík
                 {cart?.items && cart.items.length > 0 && (
                   <Badge
-                    className="h-5 min-w-5 rounded-full px-[5px] font-mono tabular-nums"
+                    className="flex justify-center items-center h-5 min-w-5 rounded-full px-[5px] font-mono tabular-nums"
                     variant="destructive"
                   >
                     {totalItemsInCart}

@@ -168,7 +168,7 @@ const OrderDetailsTable = ({
               <h2 className="text-lg md:text-xl pb-4">Dodací adresa</h2>
               <p className="text-sm md:text-base">{shippingAddress.fullName}</p>
               <p className="mb-2 text-sm md:text-base">
-                {shippingAddress.streetAddress}, {shippingAddress.city}
+                {shippingAddress.streetAddress}, {shippingAddress.city}{" "}
                 {shippingAddress.postalCode}, {shippingAddress.country}
               </p>
               {isDelivered ? (
