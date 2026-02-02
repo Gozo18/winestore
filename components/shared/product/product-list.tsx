@@ -13,7 +13,7 @@ const ProductList = ({
   const limitedData = limit ? data.slice(0, limit) : data
 
   return (
-    <div className="my-10">
+    <div className="my-4 md:my-10">
       <h2 className="h2-bold mb-4 text-center">{title}</h2>
       {data.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
