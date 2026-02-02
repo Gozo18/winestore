@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { formatCurrency } from "@/lib/utils"
+import { Separator } from "@/components/ui/separator"
 
 const CartTable = ({ cart }: { cart?: Cart }) => {
   const router = useRouter()
@@ -125,21 +126,31 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
             </Table>
           </div>
           <Card className="mt-8 lg:mt-0">
-            <CardContent className="p-4 gap-4">
-              <div className="pb-8 lg:text-lg">
-                <p className="flex justify-between">
-                  <span className="flex items-end text-sm">Celkem kusů:</span>{" "}
-                  <span className="font-medium">
-                    {cart.items.reduce((a, b) => a + b.qty, 0)}
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="flex items-end text-sm">Cena celkem:</span>{" "}
-                  <span className="font-medium">
-                    {formatCurrency(cart.itemsPrice)}
-                  </span>
-                </p>
-              </div>
+            <CardContent className="p-4 gap-4 space-y-4 text-sm">
+              <p className="flex justify-between">
+                <span>Počet kusů:</span>{" "}
+                <span>{cart.items.reduce((a, b) => a + b.qty, 0)}</span>
+              </p>
+              <p className="flex justify-between">
+                <span>Cena s DPH:</span>{" "}
+                <span>{formatCurrency(cart.itemsPrice)}</span>
+              </p>
+              <p className="flex justify-between">
+                <span>Cena bez DPH:</span>{" "}
+                <span>{formatCurrency(cart.taxPrice)}</span>
+              </p>
+              <p className="flex justify-between">
+                <span>Doprava:</span>{" "}
+                <span>{formatCurrency(cart.shippingPrice)}</span>
+              </p>
+              <p>Při objednávce nad 2500 Kč je doprava zdarma.</p>
+              <Separator />
+              <p className="flex justify-between">
+                <span className="flex items-end">Celková cena:</span>{" "}
+                <span className="flex items-end font-medium">
+                  {formatCurrency(cart.totalPrice)}
+                </span>
+              </p>
               <Button
                 className="w-full"
                 disabled={isPending}

@@ -12,11 +12,11 @@ import { Prisma } from "@prisma/client"
 // Calculate cart prices
 const calcPrice = (items: CartItem[]) => {
   const itemsPrice = round2(
-      items.reduce((acc, item) => acc + Number(item.price) * item.qty, 0)
+      items.reduce((acc, item) => acc + Number(item.price) * item.qty, 0),
     ),
     shippingPrice = round2(itemsPrice > 2500 ? 0 : 250),
-    taxPrice = round2(itemsPrice * 0.21),
-    totalPrice = round2(itemsPrice + shippingPrice + taxPrice)
+    taxPrice = round2(itemsPrice / 1.21),
+    totalPrice = round2(itemsPrice + shippingPrice)
 
   return {
     itemsPrice: itemsPrice.toFixed(2),
@@ -75,7 +75,7 @@ export async function addItemToCart(data: CartItem) {
     } else {
       // Check if item already exists in cart
       const existItem = (cart.items as CartItem[]).find(
-        (x) => x.productId === item.productId
+        (x) => x.productId === item.productId,
       )
 
       if (existItem) {
@@ -85,7 +85,7 @@ export async function addItemToCart(data: CartItem) {
         }
         // Increase the quantity
         ;(cart.items as CartItem[]).find(
-          (x) => x.productId === item.productId
+          (x) => x.productId === item.productId,
         )!.qty = existItem.qty + 1
       } else {
         // If item does not exist in cart
@@ -173,7 +173,7 @@ export async function removeItemFromCart(productId: string) {
 
     // Check if item exists in cart
     const exist = (cart.items as CartItem[]).find(
-      (x) => x.productId === productId
+      (x) => x.productId === productId,
     )
     if (!exist) throw new Error("Produkt není v košíku")
 
@@ -181,7 +181,7 @@ export async function removeItemFromCart(productId: string) {
     if (exist.qty === 1) {
       // Remove item from cart
       cart.items = (cart.items as CartItem[]).filter(
-        (x) => x.productId !== exist.productId
+        (x) => x.productId !== exist.productId,
       )
     } else {
       // Decrease qty

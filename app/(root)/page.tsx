@@ -5,6 +5,7 @@ import {
 } from "@/lib/actions/product.actions"
 import ProductCarousel from "@/components/shared/product/product-carousel"
 import ViewAllProductsButton from "@/components/view-all-products-button"
+import HomepageLinks from "@/components/shared/homepage-links"
 
 const Homepage = async () => {
   const latestProducts = await getLatestProducts()
@@ -15,6 +16,7 @@ const Homepage = async () => {
       {featuredProducts.length > 0 && (
         <ProductCarousel data={featuredProducts} />
       )}
+      <HomepageLinks />
       <ProductList
         data={latestProducts}
         title="Nejnovější produkty"

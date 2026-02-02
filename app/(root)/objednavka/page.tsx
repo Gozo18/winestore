@@ -19,6 +19,7 @@ import {
 import Image from "next/image"
 import { formatCurrency } from "@/lib/utils"
 import PlaceOrderForm from "./place-order-form"
+import { Separator } from "@/components/ui/separator"
 
 export const metadata: Metadata = {
   title: "Odeslat objednávku",
@@ -118,17 +119,18 @@ const PlaceOrderPage = async () => {
           <Card>
             <CardContent className="p-4 gap-4 space-y-4">
               <div className="flex justify-between">
-                <div>Položky</div>
+                <div>Cena s DPH</div>
                 <div>{formatCurrency(cart.itemsPrice)}</div>
               </div>
               <div className="flex justify-between">
-                <div>DPH</div>
+                <div>Cena bez DPH</div>
                 <div>{formatCurrency(cart.taxPrice)}</div>
               </div>
               <div className="flex justify-between">
                 <div>Doprava</div>
                 <div>{formatCurrency(cart.shippingPrice)}</div>
               </div>
+              <Separator />
               <div className="flex justify-between">
                 <div>Celkem</div>
                 <div>{formatCurrency(cart.totalPrice)}</div>
