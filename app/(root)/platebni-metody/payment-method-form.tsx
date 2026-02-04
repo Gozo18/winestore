@@ -17,7 +17,13 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Loader } from "lucide-react"
+import {
+  ArrowRight,
+  Loader,
+  CreditCard,
+  Banknote,
+  HandCoins,
+} from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { updateUserPaymentMethod } from "@/lib/actions/user.actions"
 
@@ -90,7 +96,24 @@ const PaymentMethodForm = ({
                               />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              {paymentMethod}
+                              {paymentMethod === "Stripe" && (
+                                <>
+                                  <CreditCard className="w-5 h-5 inline mr-2" />
+                                  Platba kartou
+                                </>
+                              )}
+                              {paymentMethod === "PayPal" && (
+                                <>
+                                  <Banknote className="w-5 h-5 inline mr-2" />
+                                  Zaplatit přes PayPal
+                                </>
+                              )}
+                              {paymentMethod === "Hotovost" && (
+                                <>
+                                  <HandCoins className="w-5 h-5 inline mr-2" />
+                                  Dobírka
+                                </>
+                              )}
                             </FormLabel>
                           </FormItem>
                         ))}

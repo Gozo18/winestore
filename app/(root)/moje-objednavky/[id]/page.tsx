@@ -7,6 +7,7 @@ import { auth } from "@/auth"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Stripe from "stripe"
 
 export const metadata: Metadata = {
   title: "Detail objednávky",
@@ -23,6 +24,21 @@ const OrderDetailsPage = async (props: {
   if (!order) notFound()
 
   const session = await auth()
+
+  let client_secret = null
+
+  // Check if is not paid and using stripe
+  if (order.paymentMethod === "Stripe" && !order.isPaid) {
+    // Init stripe instance
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
+    // Create payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(Number(order.totalPrice) * 100),
+      currency: "CZK",
+      metadata: { orderId: order.id },
+    })
+    client_secret = paymentIntent.client_secret
+  }
 
   return (
     <>
@@ -44,8 +60,10 @@ const OrderDetailsPage = async (props: {
           ...order,
           shippingAddress: order.shippingAddress as ShippingAddress,
         }}
+        stripeClientSecret={client_secret}
         paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
         isAdmin={session?.user?.role === "admin" || false}
+        userEmail={session?.user?.email || ""}
       />
     </>
   )

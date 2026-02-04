@@ -27,15 +27,21 @@ import {
   updateOrderToPaidCOD,
   deliverOrder,
 } from "@/lib/actions/order.actions"
+import StripePayment from "./stripe-payment"
+import { Separator } from "@/components/ui/separator"
 
 const OrderDetailsTable = ({
   order,
   paypalClientId,
   isAdmin,
+  stripeClientSecret,
+  userEmail,
 }: {
   order: Order
   paypalClientId: string
   isAdmin: boolean
+  stripeClientSecret: string | null
+  userEmail: string
 }) => {
   const {
     id,
@@ -146,11 +152,17 @@ const OrderDetailsTable = ({
         {formatDateTime(createdAt!).dateTime}
       </h1>
       <div className="grid md:grid-cols-3 md:gap-5">
-        <div className="md:col-span-2 space-4-y overlow-x-auto">
+        <div className="md:col-span-2 space-y-4 overflow-x-auto">
           <Card>
             <CardContent className="p-4 gap-4">
               <h2 className="text-lg md:text-xl pb-4">Platební metoda</h2>
-              <p className="mb-2 text-sm md:text-base">{paymentMethod}</p>
+              <p className="mb-2 text-sm md:text-base">
+                {paymentMethod === "Stripe"
+                  ? "Platba kartou"
+                  : paymentMethod === "PayPal"
+                    ? "Platba přes PayPal"
+                    : "Dobírka"}
+              </p>
               {isPaid ? (
                 <Badge
                   variant="secondary"
@@ -224,7 +236,7 @@ const OrderDetailsTable = ({
             </CardContent>
           </Card>
         </div>
-        <div className="mt-2 md:mt-0 w-full md:w-auto">
+        <div className="mt-2 md:mt-0 w-full md:w-auto space-y-4">
           <Card className="w-full md:w-auto">
             <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
               <div className="flex justify-between">
@@ -239,12 +251,17 @@ const OrderDetailsTable = ({
                 <div>Doprava</div>
                 <div>{formatCurrency(shippingPrice)}</div>
               </div>
+              <Separator />
               <div className="flex justify-between">
                 <div>Celkem</div>
                 <div className="font-semibold">
                   {formatCurrency(totalPrice)}
                 </div>
               </div>
+            </CardContent>
+          </Card>
+          <Card className="w-full md:w-auto" id="payment-section">
+            <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
               {/* PayPal Payment */}
               {!isPaid && paymentMethod === "Paypal" && (
                 <div>
@@ -260,6 +277,15 @@ const OrderDetailsTable = ({
                     />
                   </PayPalScriptProvider>
                 </div>
+              )}
+              {/* Stripe Payment */}
+              {!isPaid && paymentMethod === "Stripe" && stripeClientSecret && (
+                <StripePayment
+                  priceInCents={Number(order.totalPrice) * 100}
+                  orderId={order.id}
+                  clientSecret={stripeClientSecret}
+                  userEmail={userEmail}
+                />
               )}
               {/* Cash On Delivery Payment */}
               {isAdmin && !isPaid && paymentMethod === "Hotovost" && (

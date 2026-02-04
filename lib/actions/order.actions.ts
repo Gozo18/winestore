@@ -91,10 +91,18 @@ export async function createOrder() {
 
     if (!insertedOrderId) throw new Error("Objednávku se nepodařilo vytvořit.")
 
+    let redirectLink = ""
+
+    if (user.paymentMethod === "Stripe" || user.paymentMethod === "Paypal") {
+      redirectLink = `/moje-objednavky/${insertedOrderId}#payment-section`
+    } else {
+      redirectLink = `/moje-objednavky/${insertedOrderId}`
+    }
+
     return {
       success: true,
       message: "Objednávka byla úspěšně vytvořena.",
-      redirectTo: `/moje-objednavky/${insertedOrderId}`,
+      redirectTo: redirectLink,
     }
   } catch (error) {
     if (isRedirectError(error)) throw error
@@ -160,7 +168,7 @@ export async function createPayPalOrder(orderId: string) {
 // Approve paypal order and update order to paid
 export async function approvePayPalOrder(
   orderId: string,
-  data: { orderID: string }
+  data: { orderID: string },
 ) {
   try {
     // Get order from database
