@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import Menu from "@/components/shared/header/menu"
 import MainNav from "./main-nav"
+import Footer from "@/components/footer"
 
 export default function UserLayout({
   children,
@@ -29,10 +30,11 @@ export default function UserLayout({
           </div>
         </div>
 
-        <div className="flex-1 space-y-4 p-8 pt-6 container mx-auto">
+        <div className="flex-1 space-y-4 p-8 pt-6 container mx-auto min-h-[80vh]">
           {children}
         </div>
       </div>
+      <Footer />
     </>
   )
 }

@@ -110,14 +110,14 @@ export async function getAllProducts({
       sort === "lowest"
         ? { price: "asc" }
         : sort === "highest"
-        ? { price: "desc" }
-        : sort === "rating"
-        ? { rating: "desc" }
-        : sort === "sugar-low"
-        ? { sugar: "asc" }
-        : sort === "sugar-high"
-        ? { sugar: "desc" }
-        : { createdAt: "desc" },
+          ? { price: "desc" }
+          : sort === "rating"
+            ? { rating: "desc" }
+            : sort === "sugar-low"
+              ? { sugar: "asc" }
+              : sort === "sugar-high"
+                ? { sugar: "desc" }
+                : { createdAt: "desc" },
     skip: (page - 1) * limit,
     take: limit,
   })
@@ -226,4 +226,20 @@ export async function getFeaturedProducts() {
   })
 
   return convertToPlainObject(data)
+}
+
+// Get all product names and their slugs
+export async function getAllProductSlugs() {
+  const data = await prisma.product.findMany({
+    select: {
+      name: true,
+      slug: true,
+      images: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  })
+
+  return data
 }

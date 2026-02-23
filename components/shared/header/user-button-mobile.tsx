@@ -4,7 +4,6 @@ import { signOutUser } from "@/lib/actions/user.actions"
 import { Button } from "@/components/ui/button"
 import { UserIcon } from "lucide-react"
 import { getAllCategories } from "@/lib/actions/product.actions"
-import Search from "@/components/shared/header/search"
 import { SheetClose } from "@/components/ui/sheet"
 
 const UserButtonMobile = async () => {
@@ -23,9 +22,6 @@ const UserButtonMobile = async () => {
 
   return (
     <div className="flex lg:hidden flex-col w-full">
-      <div className="py-4 w-full">
-        <Search />
-      </div>
       <div className="filter-links bg-gray-100 rounded-lg p-4">
         <span className="py-6 h-6 flex items-center">Kategorie</span>
         <SheetClose asChild>
