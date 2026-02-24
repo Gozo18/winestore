@@ -32,10 +32,10 @@ const ProductCard = async ({ product }: { product: Product }) => {
           />
         </Link>
       </CardHeader>
-      <CardContent className="p-4 grid gap-4">
+      <CardContent className="p-1 sm:p-4 grid gap-4">
         <div className="text-sm text-center font-cairo">{product.brand}</div>
         <Link href={`/product/${product.slug}`} className="h-12 text-center">
-          <h2 className="font-bold font-cairo">
+          <h2 className="font-bold font-cairo text-sm sm:text-base">
             {product.sort} {product.year}
             <br />
             <span className="font-medium">
@@ -43,10 +43,13 @@ const ProductCard = async ({ product }: { product: Product }) => {
             </span>
           </h2>
         </Link>
-        <div className="flex-between gap-4">
+        <div className="flex-center flex-wrap sm:flex-between sm:gap-4">
           <Rating value={Number(product.rating)} />
           {product.stock > 0 ? (
-            <ProductPrice value={Number(product.price)} />
+            <ProductPrice
+              value={Number(product.price)}
+              className="w-full sm:w-auto mt-4 sm:mt-0 text-center sm:text-left"
+            />
           ) : (
             <p className="text-destructive">Vyprodáno</p>
           )}

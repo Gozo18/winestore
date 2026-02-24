@@ -10,7 +10,7 @@ const Header = async () => {
 
   return (
     <header className="w-full border-b">
-      <div className="wrapper flex-between">
+      <div className="wrapper flex-between !px-2.5 sm:!px-5">
         <div className="flex-start">
           <Link href="/" className="flex-start">
             <Image

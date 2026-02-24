@@ -14,9 +14,11 @@ const ProductList = ({
 
   return (
     <div className="my-4 md:my-10">
-      <h2 className="h2-bold mb-4 text-center">{title}</h2>
+      <h2 className="font-bold font-cairo text-xl lg:text-2xl mb-4 text-center">
+        {title}
+      </h2>
       {data.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
           {limitedData.map((product: Product) => (
             <ProductCard key={product.slug} product={product} />
           ))}

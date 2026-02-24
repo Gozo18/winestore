@@ -75,7 +75,7 @@ const Search = ({ products }: ProductSearchProps) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Hledat..."
-              className="w-[150px] lg:w-[300px] xlg:w-[450px] text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="w-[130px] lg:w-[300px] xlg:w-[450px] text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
               autoComplete="off"
             />
 

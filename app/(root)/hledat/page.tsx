@@ -298,7 +298,7 @@ const SearchPage = async (props: {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-3">
           {products.data.length === 0 && <div>Žádný produkt nenalezen.</div>}
           {products.data.map((product) => (
             <ProductCard key={product.id} product={product} />

@@ -80,7 +80,11 @@ const AddToCart = ({ cart, item }: { cart?: Cart; item: CartItem }) => {
       </Button>
     </div>
   ) : (
-    <Button className="w-full" type="button" onClick={handleAddToCart}>
+    <Button
+      className="w-full text-xs sm:text-sm gap-1 sm:gap-2 px-1 sm:px-4"
+      type="button"
+      onClick={handleAddToCart}
+    >
       {isPending ? <Loader className="h-4 w-4 animate-spin" /> : <Plus />}
       Přidat do košíku
     </Button>

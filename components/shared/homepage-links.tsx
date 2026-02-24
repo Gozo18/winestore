@@ -23,10 +23,10 @@ const links = [
 
 const HomepageLinks = () => {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4 md:mt-10">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mt-4 md:mt-10">
       {links.map((link) => (
         <Link key={link.href} href={link.href}>
-          <Card className="flex flex-col md:flex-row justify-center items-center p-2 md:p-4 hover:bg-gray-100">
+          <Card className="flex flex-col md:flex-row justify-center items-center p-2 md:p-4 hover:bg-gray-100 text-xs sm:text-sm md:text-base">
             <Image
               src={link.image}
               alt={link.label}
