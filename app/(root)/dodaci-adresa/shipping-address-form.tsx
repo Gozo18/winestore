@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, Loader } from "lucide-react"
 import { updateUserAddress } from "@/lib/actions/user.actions"
 import { shippingAddressDefaultValues } from "@/lib/constants"
+import { Card } from "@/components/ui/card"
 
 const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
   const router = useRouter()
@@ -33,7 +34,7 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
   })
 
   const onSubmit: SubmitHandler<z.infer<typeof shippingAddressSchema>> = async (
-    values
+    values,
   ) => {
     startTransition(async () => {
       const res = await updateUserAddress(values)
@@ -51,9 +52,9 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
   }
 
   return (
-    <>
-      <div className="max-w-md mx-auto space-y-4">
-        <h1 className="h2-bold mt-4">Dodací adresa</h1>
+    <div className="max-w-md mx-auto space-y-4">
+      <Card className="p-8">
+        <h1 className="h2-bold">Dodací adresa</h1>
         <p className="text-sm text-muted-foreground">
           Prosím, zadejte dodací adresu.
         </p>
@@ -207,8 +208,8 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
             </div>
           </form>
         </Form>
-      </div>
-    </>
+      </Card>
+    </div>
   )
 }
 

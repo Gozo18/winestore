@@ -37,7 +37,7 @@ const OrderDetailsTable = ({
   stripeClientSecret,
   userEmail,
 }: {
-  order: Order
+  order: Omit<Order, "paymentResult">
   paypalClientId: string
   isAdmin: boolean
   stripeClientSecret: string | null
@@ -260,40 +260,44 @@ const OrderDetailsTable = ({
               </div>
             </CardContent>
           </Card>
-          <Card className="w-full md:w-auto" id="payment-section">
-            <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
-              {/* PayPal Payment */}
-              {!isPaid && paymentMethod === "Paypal" && (
-                <div>
-                  <PayPalScriptProvider
-                    options={{
-                      clientId: paypalClientId,
-                    }}
-                  >
-                    <PrintLoadingState />
-                    <PayPalButtons
-                      createOrder={handleCreatePayPalOrder}
-                      onApprove={handleApprovePayPalOrder}
+          {!isPaid && (
+            <Card className="w-full md:w-auto" id="payment-section">
+              <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
+                {/* PayPal Payment */}
+                {!isPaid && paymentMethod === "Paypal" && (
+                  <div>
+                    <PayPalScriptProvider
+                      options={{
+                        clientId: paypalClientId,
+                      }}
+                    >
+                      <PrintLoadingState />
+                      <PayPalButtons
+                        createOrder={handleCreatePayPalOrder}
+                        onApprove={handleApprovePayPalOrder}
+                      />
+                    </PayPalScriptProvider>
+                  </div>
+                )}
+                {/* Stripe Payment */}
+                {!isPaid &&
+                  paymentMethod === "Stripe" &&
+                  stripeClientSecret && (
+                    <StripePayment
+                      priceInCents={Number(order.totalPrice) * 100}
+                      orderId={order.id}
+                      clientSecret={stripeClientSecret}
+                      userEmail={userEmail}
                     />
-                  </PayPalScriptProvider>
-                </div>
-              )}
-              {/* Stripe Payment */}
-              {!isPaid && paymentMethod === "Stripe" && stripeClientSecret && (
-                <StripePayment
-                  priceInCents={Number(order.totalPrice) * 100}
-                  orderId={order.id}
-                  clientSecret={stripeClientSecret}
-                  userEmail={userEmail}
-                />
-              )}
-              {/* Cash On Delivery Payment */}
-              {isAdmin && !isPaid && paymentMethod === "Hotovost" && (
-                <MarkAsPaidButton />
-              )}
-              {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
-            </CardContent>
-          </Card>
+                  )}
+                {/* Cash On Delivery Payment */}
+                {isAdmin && !isPaid && paymentMethod === "Hotovost" && (
+                  <MarkAsPaidButton />
+                )}
+                {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </>

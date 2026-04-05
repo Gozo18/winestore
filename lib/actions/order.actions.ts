@@ -7,11 +7,12 @@ import { getMyCart } from "./cart.actions"
 import { getUserById } from "./user.actions"
 import { insertOrderSchema } from "../validators"
 import { prisma } from "@/db/prisma"
-import { CartItem, PaymentResult } from "@/types"
+import { CartItem, PaymentResult, ShippingAddress } from "@/types"
 import { paypal } from "../paypal"
 import { revalidatePath } from "next/cache"
 import { PAGE_SIZE } from "../constants"
 import { Prisma } from "@prisma/client"
+import { sendPurchaseReceipt } from "@/email"
 
 // Create order and create the order items
 export async function createOrder() {
@@ -65,16 +66,18 @@ export async function createOrder() {
       // Create order
       const insertedOrder = await tx.order.create({ data: order })
       // Create order items from the cart items
-      for (const item of cart.items as CartItem[]) {
-        await tx.orderItem.create({
-          data: {
-            ...item,
-            price: item.price,
-            orderId: insertedOrder.id,
-          },
-        })
-      }
-      // Clear cart
+        const orderItems = []
+        for (const item of cart.items as CartItem[]) {
+          const orderItem = await tx.orderItem.create({
+            data: {
+              ...item,
+              price: item.price,
+              orderId: insertedOrder.id,
+            },
+          })
+          orderItems.push(orderItem)
+        }
+        // Clear cart
       await tx.cart.update({
         where: { id: cart.id },
         data: {
@@ -90,6 +93,7 @@ export async function createOrder() {
     })
 
     if (!insertedOrderId) throw new Error("Objednávku se nepodařilo vytvořit.")
+    
 
     let redirectLink = ""
 
@@ -267,13 +271,15 @@ export async function updateOrderToPaid({
 
   if (!updatedOrder) throw new Error("Objednávka nenalezena.")
 
-  /* sendPurchaseReceipt({
+  sendPurchaseReceipt({
     order: {
       ...updatedOrder,
       shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
       paymentResult: updatedOrder.paymentResult as PaymentResult,
+      orderitems: updatedOrder.orderitems,
+      user: updatedOrder.user,
     },
-  }) */
+  })
 }
 
 // Get user's orders

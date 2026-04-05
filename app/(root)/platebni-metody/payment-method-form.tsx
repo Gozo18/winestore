@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { updateUserPaymentMethod } from "@/lib/actions/user.actions"
+import { Card } from "@/components/ui/card"
 
 const PaymentMethodForm = ({
   preferredPaymentMethod,
@@ -61,10 +62,10 @@ const PaymentMethodForm = ({
   }
 
   return (
-    <>
-      <div className="max-w-md mx-auto space-y-4 text-center">
-        <h1 className="h2-bold mt-4">Platební metody</h1>
-        <p className="text-sm text-muted-foreground">
+    <div className="max-w-md mx-auto space-y-4 text-center">
+      <Card className="p-8">
+        <h1 className="h2-bold">Platební metody</h1>
+        <p className="my-4 text-sm text-muted-foreground">
           Prosím, vyberte preferovanou platební metodu pro vaši objednávku.
         </p>
         <Form {...form}>
@@ -137,8 +138,8 @@ const PaymentMethodForm = ({
             </div>
           </form>
         </Form>
-      </div>
-    </>
+      </Card>
+    </div>
   )
 }
 
