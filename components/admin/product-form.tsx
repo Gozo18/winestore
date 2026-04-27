@@ -40,14 +40,14 @@ const ProductForm = ({
 
   const form = useForm<z.infer<typeof insertProductSchema>>({
     resolver: zodResolver(
-      type === "Create" ? insertProductSchema : updateProductSchema
+      type === "Create" ? insertProductSchema : updateProductSchema,
     ),
     defaultValues:
       product && type === "Update" ? product : productDefaultValues,
   })
 
   const onSubmit: SubmitHandler<z.infer<typeof insertProductSchema>> = async (
-    values
+    values,
   ) => {
     // On Create
     if (type === "Create") {
@@ -145,7 +145,7 @@ const ProductForm = ({
                       onClick={() => {
                         form.setValue(
                           "slug",
-                          slugify(form.getValues("name"), { lower: true })
+                          slugify(form.getValues("name"), { lower: true }),
                         )
                       }}
                     >
@@ -419,14 +419,27 @@ const ProductForm = ({
                   <CardContent className="space-y-2 mt-2 min-h-48">
                     <div className="flex-start space-x-2">
                       {images.map((image: string) => (
-                        <Image
-                          key={image}
-                          src={image}
-                          alt="produktový obrázek"
-                          className="w-20 h-20 object-cover object-center rounded-sm"
-                          width={100}
-                          height={100}
-                        />
+                        <div key={image} className="relative group w-20 h-20">
+                          <Image
+                            src={image}
+                            alt="produktový obrázek"
+                            className="w-20 h-20 object-cover object-center rounded-sm"
+                            width={100}
+                            height={100}
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              form.setValue(
+                                "images",
+                                images.filter((img: string) => img !== image),
+                              )
+                            }
+                            className="absolute top-0 right-0 bg-red-600 !text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            ✕
+                          </button>
+                        </div>
                       ))}
                       <FormControl>
                         <UploadButton
@@ -552,8 +565,8 @@ const ProductForm = ({
             {form.formState.isSubmitting
               ? "Odesílám..."
               : type === "Create"
-              ? "Vytvoř produkt"
-              : "Uprav produkt"}
+                ? "Vytvoř produkt"
+                : "Uprav produkt"}
           </Button>
         </div>
       </form>

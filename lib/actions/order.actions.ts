@@ -66,18 +66,16 @@ export async function createOrder() {
       // Create order
       const insertedOrder = await tx.order.create({ data: order })
       // Create order items from the cart items
-        const orderItems = []
-        for (const item of cart.items as CartItem[]) {
-          const orderItem = await tx.orderItem.create({
-            data: {
-              ...item,
-              price: item.price,
-              orderId: insertedOrder.id,
-            },
-          })
-          orderItems.push(orderItem)
-        }
-        // Clear cart
+      for (const item of cart.items as CartItem[]) {
+        await tx.orderItem.create({
+          data: {
+            ...item,
+            price: item.price,
+            orderId: insertedOrder.id,
+          },
+        })
+      }
+      // Clear cart
       await tx.cart.update({
         where: { id: cart.id },
         data: {
@@ -93,7 +91,6 @@ export async function createOrder() {
     })
 
     if (!insertedOrderId) throw new Error("Objednávku se nepodařilo vytvořit.")
-    
 
     let redirectLink = ""
 
@@ -276,8 +273,6 @@ export async function updateOrderToPaid({
       ...updatedOrder,
       shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
       paymentResult: updatedOrder.paymentResult as PaymentResult,
-      orderitems: updatedOrder.orderitems,
-      user: updatedOrder.user,
     },
   })
 }

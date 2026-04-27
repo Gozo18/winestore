@@ -7,6 +7,8 @@ import ProductCarousel from "@/components/shared/product/product-carousel"
 import ViewAllProductsButton from "@/components/view-all-products-button"
 import HomepageLinks from "@/components/shared/homepage-links"
 import { APP_NAME } from "@/lib/constants"
+import IconBoxes from "@/components/icon-boxes"
+import DealCountdown from "@/components/deal-countdown"
 
 const Homepage = async () => {
   const latestProducts = await getLatestProducts()
@@ -30,6 +32,8 @@ const Homepage = async () => {
         limit={4}
       />
       <ViewAllProductsButton />
+      <IconBoxes />
+      <DealCountdown />
     </>
   )
 }

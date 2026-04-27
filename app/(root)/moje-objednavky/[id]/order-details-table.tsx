@@ -260,41 +260,54 @@ const OrderDetailsTable = ({
               </div>
             </CardContent>
           </Card>
-          {!isPaid && (
-            <Card className="w-full md:w-auto" id="payment-section">
-              <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
-                {/* PayPal Payment */}
-                {!isPaid && paymentMethod === "Paypal" && (
-                  <div>
-                    <PayPalScriptProvider
-                      options={{
-                        clientId: paypalClientId,
-                      }}
-                    >
-                      <PrintLoadingState />
-                      <PayPalButtons
-                        createOrder={handleCreatePayPalOrder}
-                        onApprove={handleApprovePayPalOrder}
-                      />
-                    </PayPalScriptProvider>
-                  </div>
-                )}
-                {/* Stripe Payment */}
-                {!isPaid &&
-                  paymentMethod === "Stripe" &&
-                  stripeClientSecret && (
-                    <StripePayment
-                      priceInCents={Number(order.totalPrice) * 100}
-                      orderId={order.id}
-                      clientSecret={stripeClientSecret}
-                      userEmail={userEmail}
-                    />
+          {!isPaid &&
+            (paymentMethod === "Stripe" || paymentMethod === "Paypal") && (
+              <Card className="w-full md:w-auto" id="payment-section">
+                <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
+                  {/* PayPal Payment */}
+                  {!isPaid && paymentMethod === "Paypal" && (
+                    <div>
+                      <PayPalScriptProvider
+                        options={{
+                          clientId: paypalClientId,
+                        }}
+                      >
+                        <PrintLoadingState />
+                        <PayPalButtons
+                          createOrder={handleCreatePayPalOrder}
+                          onApprove={handleApprovePayPalOrder}
+                        />
+                      </PayPalScriptProvider>
+                    </div>
                   )}
-                {/* Cash On Delivery Payment */}
-                {isAdmin && !isPaid && paymentMethod === "Hotovost" && (
-                  <MarkAsPaidButton />
-                )}
-                {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
+                  {/* Stripe Payment */}
+                  {!isPaid &&
+                    paymentMethod === "Stripe" &&
+                    stripeClientSecret && (
+                      <StripePayment
+                        priceInCents={Number(order.totalPrice) * 100}
+                        orderId={order.id}
+                        clientSecret={stripeClientSecret}
+                        userEmail={userEmail}
+                      />
+                    )}
+                </CardContent>
+              </Card>
+            )}
+
+          {/* Cash On Delivery Payment */}
+          {isAdmin && !isPaid && paymentMethod === "Hotovost" && (
+            <Card className="w-full md:w-auto">
+              <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
+                <MarkAsPaidButton />
+              </CardContent>
+            </Card>
+          )}
+          {/* Delivery button */}
+          {isAdmin && isPaid && !isDelivered && (
+            <Card className="w-full md:w-auto">
+              <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
+                <MarkAsDeliveredButton />
               </CardContent>
             </Card>
           )}
