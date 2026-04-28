@@ -1,3 +1,4 @@
+import AgeVerificationModal from "@/components/age-verification-modal"
 import Footer from "@/components/footer"
 import Header from "@/components/shared/header"
 
@@ -7,10 +8,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <div className="flex h-screen flex-col">
-      <Header />
-      <main className="flex-1 wrapper !px-2.5 sm:!px-5">{children}</main>
-      <Footer />
-    </div>
+    <>
+      <AgeVerificationModal />
+      <div className="flex h-screen flex-col">
+        <Header />
+        <main className="flex-1 wrapper !px-2.5 sm:!px-5">{children}</main>
+        <Footer />
+      </div>
+    </>
   )
 }
