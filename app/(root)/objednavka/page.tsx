@@ -40,6 +40,15 @@ const PlaceOrderPage = async () => {
 
   const userAddress = user.address as ShippingAddress
 
+  const COD_SURCHARGE = 50
+  const isCOD = user.paymentMethod === "Hotovost"
+  const displayShippingPrice = isCOD
+    ? (Number(cart.shippingPrice) + COD_SURCHARGE).toFixed(2)
+    : cart.shippingPrice
+  const displayTotalPrice = isCOD
+    ? (Number(cart.totalPrice) + COD_SURCHARGE).toFixed(2)
+    : cart.totalPrice
+
   return (
     <>
       <CheckoutSteps current={3} />
@@ -127,13 +136,13 @@ const PlaceOrderPage = async () => {
                 <div>{formatCurrency(cart.taxPrice)}</div>
               </div>
               <div className="flex justify-between">
-                <div>Doprava</div>
-                <div>{formatCurrency(cart.shippingPrice)}</div>
+                <div>Doprava{isCOD && " (vč. příplatku za dobírku 50 Kč)"}</div>
+                <div>{formatCurrency(displayShippingPrice)}</div>
               </div>
               <Separator />
               <div className="flex justify-between">
                 <div>Celkem</div>
-                <div>{formatCurrency(cart.totalPrice)}</div>
+                <div>{formatCurrency(displayTotalPrice)}</div>
               </div>
               <PlaceOrderForm />
             </CardContent>

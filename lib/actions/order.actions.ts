@@ -50,15 +50,24 @@ export async function createOrder() {
       }
     }
 
+    const COD_SURCHARGE = 50
+    const isCOD = user.paymentMethod === "Hotovost"
+    const shippingPrice = isCOD
+      ? (Number(cart.shippingPrice) + COD_SURCHARGE).toFixed(2)
+      : cart.shippingPrice
+    const totalPrice = isCOD
+      ? (Number(cart.totalPrice) + COD_SURCHARGE).toFixed(2)
+      : cart.totalPrice
+
     // Create order object
     const order = insertOrderSchema.parse({
       userId: user.id,
       shippingAddress: user.address,
       paymentMethod: user.paymentMethod,
       itemsPrice: cart.itemsPrice,
-      shippingPrice: cart.shippingPrice,
+      shippingPrice,
       taxPrice: cart.taxPrice,
-      totalPrice: cart.totalPrice,
+      totalPrice,
     })
 
     // Create a transaction to create order and order items in database
