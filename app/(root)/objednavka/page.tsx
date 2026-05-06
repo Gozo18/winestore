@@ -136,7 +136,14 @@ const PlaceOrderPage = async () => {
                 <div>{formatCurrency(cart.taxPrice)}</div>
               </div>
               <div className="flex justify-between">
-                <div>Doprava{isCOD && " (vč. příplatku za dobírku 50 Kč)"}</div>
+                <div>
+                  Doprava &nbsp;
+                  {isCOD && (
+                    <span className="text-black/50 text-sm">
+                      (včetně dobírky 50 Kč)
+                    </span>
+                  )}
+                </div>
                 <div>{formatCurrency(displayShippingPrice)}</div>
               </div>
               <Separator />

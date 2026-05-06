@@ -100,19 +100,28 @@ const PaymentMethodForm = ({
                               {paymentMethod === "Stripe" && (
                                 <>
                                   <CreditCard className="w-5 h-5 inline mr-2" />
-                                  Platba kartou
+                                  Platba kartou{" "}
+                                  <span className="text-black/50 text-sm">
+                                    (zdarma)
+                                  </span>
                                 </>
                               )}
                               {paymentMethod === "PayPal" && (
                                 <>
                                   <Banknote className="w-5 h-5 inline mr-2" />
-                                  Zaplatit přes PayPal
+                                  Zaplatit přes PayPal{" "}
+                                  <span className="text-black/50 text-sm">
+                                    (zdarma)
+                                  </span>
                                 </>
                               )}
                               {paymentMethod === "Hotovost" && (
                                 <>
                                   <HandCoins className="w-5 h-5 inline mr-2" />
-                                  Dobírka
+                                  Dobírka{" "}
+                                  <span className="text-black/50 text-sm">
+                                    (poplatek 50 Kč)
+                                  </span>
                                 </>
                               )}
                             </FormLabel>
