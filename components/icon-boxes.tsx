@@ -1,4 +1,4 @@
-import { DollarSign, Headset, ShoppingBag, WalletCards } from "lucide-react"
+import { BottleWine, Headset, Van, WalletCards } from "lucide-react"
 import { Card, CardContent } from "./ui/card"
 
 const IconBoxes = () => {
@@ -7,17 +7,17 @@ const IconBoxes = () => {
       <Card>
         <CardContent className="grid md:grid-cols-4 gap-4 p-4">
           <div className="space-y-2 flex flex-col items-center text-center">
-            <ShoppingBag />
+            <Van />
             <div className="text-sm font-bold">Doprava zdarma</div>
             <div className="text-sm text-muted-foreground">
-              Doprava zdarma pro objednávky nad 2000,- Kč
+              Doprava zdarma pro objednávky nad 2500,- Kč
             </div>
           </div>
           <div className="space-y-2 flex flex-col items-center text-center">
-            <DollarSign />
-            <div className="text-sm font-bold">Garance vracení peněz</div>
+            <BottleWine />
+            <div className="text-sm font-bold">Široký výběr vína</div>
             <div className="text-sm text-muted-foreground">
-              30 dní po nákupu
+              Pro každého milovníka vína máme něco v nabídce
             </div>
           </div>
           <div className="space-y-2 flex flex-col items-center text-center">
@@ -29,9 +29,9 @@ const IconBoxes = () => {
           </div>
           <div className="space-y-2 flex flex-col items-center text-center">
             <Headset />
-            <div className="text-sm font-bold">24/7 podpora</div>
+            <div className="text-sm font-bold">Potřebujete poradit?</div>
             <div className="text-sm text-muted-foreground">
-              Získejte podporu kdykoli potřebujete
+              Neváhejte nás kontaktovat, rádi vám pomůžeme
             </div>
           </div>
         </CardContent>

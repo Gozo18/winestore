@@ -143,11 +143,13 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
                 <span>Doprava:</span>{" "}
                 <span>{formatCurrency(cart.shippingPrice)}</span>
               </p>
-              <p>Při objednávce nad 2500 Kč je doprava zdarma.</p>
+              <p className="text-black/50">
+                Při objednávce nad 2500 Kč je doprava zdarma.
+              </p>
               <Separator />
-              <p className="flex justify-between">
+              <p className="flex justify-between font-semibold">
                 <span className="flex items-end">Celková cena:</span>{" "}
-                <span className="flex items-end font-medium">
+                <span className="flex items-end">
                   {formatCurrency(cart.totalPrice)}
                 </span>
               </p>

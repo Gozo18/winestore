@@ -17,11 +17,12 @@ import { z } from "zod"
 import { PAGE_SIZE } from "../constants"
 import { Prisma } from "@prisma/client"
 import { revalidatePath } from "next/cache"
+import { getMyCart } from "./cart.actions"
 
 // Sign in user with credentials
 export async function signInWithCredentials(
   prevState: unknown,
-  formData: FormData
+  formData: FormData,
 ) {
   try {
     // Validate form data
@@ -45,6 +46,8 @@ export async function signInWithCredentials(
 
 // Sign user out
 export async function signOutUser() {
+  const currentCart = await getMyCart()
+  await prisma.cart.delete({ where: { id: currentCart?.id } })
   await signOut()
 }
 
@@ -121,7 +124,7 @@ export async function updateUserAddress(data: ShippingAddress) {
 
 // Update user´s payment method
 export async function updateUserPaymentMethod(
-  data: z.infer<typeof paymentMethodSchema>
+  data: z.infer<typeof paymentMethodSchema>,
 ) {
   try {
     const session = await auth()

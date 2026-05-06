@@ -10,7 +10,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 
 const STORAGE_KEY = "age_verified"
@@ -52,16 +51,14 @@ export default function AgeVerificationModal() {
             className="mx-auto mb-6"
           />
 
-          <DialogTitle className="font-serif text-2xl font-normal text-black tracking-wide">
-            Vítejte ve víno Iris
+          <DialogTitle className="text-2xl text-black tracking-wide">
+            Vítejte ve Víno Iris
           </DialogTitle>
 
           <DialogDescription className="text-black/50 text-sm tracking-wide">
             Tento web obsahuje alkoholické nápoje.
           </DialogDescription>
         </DialogHeader>
-
-        <Separator className="bg-black/10 my-1" />
 
         {/* Age box */}
         <div className="border border-black/15 bg-black/5 rounded-sm px-6 py-5 my-2">
@@ -77,23 +74,23 @@ export default function AgeVerificationModal() {
           <Button
             onClick={handleConfirm}
             className="w-full bg-black hover:bg-black/90
-              text-white border uppercase text-sm"
+              text-white uppercase text-sm"
           >
             Ano, je mi 18+
           </Button>
           <Button
             variant="ghost"
             onClick={handleDeny}
-            className="w-full text-black/30 hover:text-black/60
+            className="w-full text-black/50 hover:text-black/60
               hover:bg-transparent border border-black/10 hover:border-black/20
-              text-sm tracking-wide transition-all duration-200 cursor-pointer"
+              text-sm tracking-wide transition-all duration-200 cursor-pointer !mx-0"
           >
             Ne, je mi méně než 18
           </Button>
         </DialogFooter>
 
         {/* Disclaimer */}
-        <p className="text-black/20 text-xs leading-relaxed tracking-wide mt-1">
+        <p className="text-black/50 text-xs leading-relaxed tracking-wide mt-1">
           Vstupem potvrzujete, že jste dosáhli zákonného věku pro konzumaci
           alkoholu ve vaší zemi. Alkohol škodí zdraví — pijte zodpovědně.
         </p>
