@@ -13,7 +13,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
@@ -27,6 +26,31 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { updateUserPaymentMethod } from "@/lib/actions/user.actions"
 import { Card } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+
+const PAYMENT_METHOD_META: Record<
+  string,
+  { icon: React.ReactNode; label: string; fee: string; description: string }
+> = {
+  Stripe: {
+    icon: <CreditCard className="w-6 h-6" />,
+    label: "Platba kartou",
+    fee: "zdarma",
+    description: "Visa, Mastercard",
+  },
+  PayPal: {
+    icon: <Banknote className="w-6 h-6" />,
+    label: "PayPal",
+    fee: "zdarma",
+    description: "Platba přes váš PayPal účet",
+  },
+  Hotovost: {
+    icon: <HandCoins className="w-6 h-6" />,
+    label: "Dobírka",
+    fee: "+ 50 Kč",
+    description: "Platba při převzetí zásilky",
+  },
+}
 
 const PaymentMethodForm = ({
   preferredPaymentMethod,
@@ -62,89 +86,97 @@ const PaymentMethodForm = ({
   }
 
   return (
-    <div className="max-w-md mx-auto space-y-4 text-center">
+    <div className="max-w-md mx-auto space-y-4">
       <Card className="p-8">
-        <h1 className="h2-bold">Platební metody</h1>
-        <p className="my-4 text-sm text-muted-foreground">
-          Prosím, vyberte preferovanou platební metodu pro vaši objednávku.
-        </p>
+        <div className="mb-6">
+          <h1 className="h2-bold">Platební metody</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Vyberte preferovanou platební metodu pro vaši objednávku.
+          </p>
+        </div>
+
         <Form {...form}>
           <form
             method="post"
-            className="space-y-4"
+            className="space-y-6"
             onSubmit={form.handleSubmit(onSubmit)}
           >
-            <div className="flex flex-row gap-5 justify-center">
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        className="flex flex-col space-y-2"
-                      >
-                        {PAYMENT_METHODS.map((paymentMethod) => (
-                          <FormItem
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex flex-col gap-3"
+                    >
+                      {PAYMENT_METHODS.map((paymentMethod) => {
+                        const meta = PAYMENT_METHOD_META[paymentMethod]
+                        const isSelected = field.value === paymentMethod
+                        return (
+                          <label
                             key={paymentMethod}
-                            className="flex items-center space-x-3 space-y-0"
+                            htmlFor={`payment-${paymentMethod}`}
+                            className={cn(
+                              "flex items-center gap-4 rounded-lg border-2 p-4 cursor-pointer transition-colors",
+                              isSelected
+                                ? "border-primary bg-primary/5"
+                                : "border-border hover:border-primary/40 hover:bg-muted/40",
+                            )}
                           >
-                            <FormControl>
-                              <RadioGroupItem
-                                value={paymentMethod}
-                                checked={field.value === paymentMethod}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {paymentMethod === "Stripe" && (
-                                <>
-                                  <CreditCard className="w-5 h-5 inline mr-2" />
-                                  Platba kartou{" "}
-                                  <span className="text-black/50 text-sm">
-                                    (zdarma)
-                                  </span>
-                                </>
+                            <RadioGroupItem
+                              value={paymentMethod}
+                              id={`payment-${paymentMethod}`}
+                              className="sr-only"
+                            />
+                            <div
+                              className={cn(
+                                "flex items-center justify-center w-10 h-10 rounded-full shrink-0",
+                                isSelected
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-muted text-muted-foreground",
                               )}
-                              {paymentMethod === "PayPal" && (
-                                <>
-                                  <Banknote className="w-5 h-5 inline mr-2" />
-                                  Zaplatit přes PayPal{" "}
-                                  <span className="text-black/50 text-sm">
-                                    (zdarma)
-                                  </span>
-                                </>
+                            >
+                              {meta?.icon}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm leading-none mb-1">
+                                {meta?.label ?? paymentMethod}
+                              </p>
+                              <p className="text-xs text-muted-foreground truncate">
+                                {meta?.description}
+                              </p>
+                            </div>
+                            <span
+                              className={cn(
+                                "text-xs font-semibold shrink-0",
+                                meta?.fee === "zdarma"
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-muted-foreground",
                               )}
-                              {paymentMethod === "Hotovost" && (
-                                <>
-                                  <HandCoins className="w-5 h-5 inline mr-2" />
-                                  Dobírka{" "}
-                                  <span className="text-black/50 text-sm">
-                                    (poplatek 50 Kč)
-                                  </span>
-                                </>
-                              )}
-                            </FormLabel>
-                          </FormItem>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                            >
+                              {meta?.fee}
+                            </span>
+                          </label>
+                        )
+                      })}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <div className="flex gap-2 justify-center">
-              <Button type="submit" disabled={isPending}>
-                {isPending ? (
-                  <Loader className="w-4 h-4 animate-spin" />
-                ) : (
-                  <ArrowRight className="w-4 h-4" />
-                )}{" "}
-                Pokračovat
-              </Button>
-            </div>
+            <Button type="submit" disabled={isPending} className="w-full">
+              {isPending ? (
+                <Loader className="w-4 h-4 animate-spin" />
+              ) : (
+                <ArrowRight className="w-4 h-4" />
+              )}
+              Pokračovat
+            </Button>
           </form>
         </Form>
       </Card>
