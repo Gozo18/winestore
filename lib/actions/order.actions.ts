@@ -12,7 +12,7 @@ import { paypal } from "../paypal"
 import { revalidatePath } from "next/cache"
 import { PAGE_SIZE } from "../constants"
 import { Prisma } from "@prisma/client"
-import { sendPurchaseReceipt } from "@/email"
+import { sendOrderReceived, sendPaymentReceipt, sendPurchaseReceipt } from "@/email"
 
 // Create order and create the order items
 export async function createOrder() {
@@ -100,6 +100,24 @@ export async function createOrder() {
     })
 
     if (!insertedOrderId) throw new Error("Objednávku se nepodařilo vytvořit.")
+
+    const newOrder = await prisma.order.findFirst({
+      where: { id: insertedOrderId },
+      include: {
+        orderitems: true,
+        user: { select: { name: true, email: true } },
+      },
+    })
+
+    if (newOrder) {
+      sendOrderReceived({
+        order: {
+          ...newOrder,
+          shippingAddress: newOrder.shippingAddress as ShippingAddress,
+          paymentResult: newOrder.paymentResult as PaymentResult,
+        },
+      })
+    }
 
     let redirectLink = ""
 
@@ -277,7 +295,7 @@ export async function updateOrderToPaid({
 
   if (!updatedOrder) throw new Error("Objednávka nenalezena.")
 
-  sendPurchaseReceipt({
+  sendPaymentReceipt({
     order: {
       ...updatedOrder,
       shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
@@ -433,13 +451,12 @@ export async function updateOrderToPaidCOD(orderId: string) {
 export async function deliverOrder(orderId: string) {
   try {
     const order = await prisma.order.findFirst({
-      where: {
-        id: orderId,
-      },
+      where: { id: orderId },
     })
 
     if (!order) throw new Error("Objednávka nenalezena")
-    if (!order.isPaid) throw new Error("Objednávka není zaplacena")
+    if (!order.isPaid && order.paymentMethod !== "Hotovost")
+      throw new Error("Objednávka není zaplacena")
 
     await prisma.order.update({
       where: { id: orderId },
@@ -448,6 +465,24 @@ export async function deliverOrder(orderId: string) {
         deliveredAt: new Date(),
       },
     })
+
+    const updatedOrder = await prisma.order.findFirst({
+      where: { id: orderId },
+      include: {
+        orderitems: true,
+        user: { select: { name: true, email: true } },
+      },
+    })
+
+    if (updatedOrder) {
+      sendPurchaseReceipt({
+        order: {
+          ...updatedOrder,
+          shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
+          paymentResult: updatedOrder.paymentResult as PaymentResult,
+        },
+      })
+    }
 
     revalidatePath(`/moje-objednavky/${orderId}`)
 

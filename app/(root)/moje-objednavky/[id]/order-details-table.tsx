@@ -295,16 +295,17 @@ const OrderDetailsTable = ({
               </Card>
             )}
 
-          {/* Cash On Delivery Payment */}
-          {isAdmin && !isPaid && paymentMethod === "Hotovost" && (
+          {/* Cash On Delivery – obě tlačítka najednou */}
+          {isAdmin && paymentMethod === "Hotovost" && (!isPaid || !isDelivered) && (
             <Card className="w-full md:w-auto">
-              <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
-                <MarkAsPaidButton />
+              <CardContent className="p-4 flex flex-wrap gap-3 text-sm md:text-base">
+                {!isPaid && <MarkAsPaidButton />}
+                {!isDelivered && <MarkAsDeliveredButton />}
               </CardContent>
             </Card>
           )}
-          {/* Delivery button */}
-          {isAdmin && isPaid && !isDelivered && (
+          {/* Delivery button for non-COD */}
+          {isAdmin && isPaid && !isDelivered && paymentMethod !== "Hotovost" && (
             <Card className="w-full md:w-auto">
               <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
                 <MarkAsDeliveredButton />
