@@ -80,7 +80,7 @@ const KontaktPage = () => {
 
         <div className="overflow-hidden rounded-lg border shadow-sm min-h-[400px]">
           <iframe
-            src="https://www.google.com/maps?q=Podhradn%C3%AD+180,+692+01+Pavlov&output=embed"
+            src="https://www.google.com/maps?q=V%C3%ADno+Iris,+Podhradn%C3%AD+180,+692+01+Pavlov&output=embed"
             width="100%"
             height="100%"
             style={{ border: 0, minHeight: "400px" }}
