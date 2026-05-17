@@ -77,7 +77,6 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
         <Head />
         <Body className="font-sans bg-gray-50">
           <Container className="max-w-xl mx-auto">
-
             {/* Header */}
             <Section className="bg-rose-800 rounded-t-lg px-8 py-6 text-center">
               <Img
@@ -112,7 +111,7 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
                     ID objednávky
                   </Text>
                   <Text className="mt-1 text-sm text-gray-700 font-medium">
-                    {order.id.toString().slice(0, 8).toUpperCase()}
+                    {order.id.toString().slice(-6).toUpperCase()}
                   </Text>
                 </Column>
                 <Column>
@@ -211,7 +210,6 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
                 © {new Date().getFullYear()} Víno Iris. Všechna práva vyhrazena.
               </Text>
             </Section>
-
           </Container>
         </Body>
       </Tailwind>

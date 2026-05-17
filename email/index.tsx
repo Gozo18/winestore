@@ -14,7 +14,7 @@ export const sendOrderReceived = async ({ order }: { order: Order }) => {
   await resend.emails.send({
     from: `${APP_NAME} <${SENDER_EMAIL}>`,
     to: order.user.email,
-    subject: `Objednávka přijata – ${order.id.toString().slice(0, 8).toUpperCase()}`,
+    subject: `Objednávka přijata – ${order.id.toString().slice(-6).toUpperCase()}`,
     react: <OrderReceivedEmail order={order} />,
   })
 }
@@ -23,7 +23,7 @@ export const sendPaymentReceipt = async ({ order }: { order: Order }) => {
   await resend.emails.send({
     from: `${APP_NAME} <${SENDER_EMAIL}>`,
     to: order.user.email,
-    subject: `Platba přijata – objednávka ${order.id.toString().slice(0, 8).toUpperCase()}`,
+    subject: `Platba přijata – objednávka ${order.id.toString().slice(-6).toUpperCase()}`,
     react: <PaymentReceiptEmail order={order} />,
   })
 }
@@ -32,7 +32,7 @@ export const sendPurchaseReceipt = async ({ order }: { order: Order }) => {
   await resend.emails.send({
     from: `${APP_NAME} <${SENDER_EMAIL}>`,
     to: order.user.email,
-    subject: `Vaše objednávka byla odeslána – ${order.id.toString().slice(0, 8).toUpperCase()}`,
+    subject: `Vaše objednávka byla odeslána – ${order.id.toString().slice(-6).toUpperCase()}`,
     react: <PurchaseReceiptEmail order={order} />,
   })
 }

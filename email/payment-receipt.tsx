@@ -80,7 +80,6 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
         <Head />
         <Body className="font-sans bg-gray-50">
           <Container className="max-w-xl mx-auto">
-
             {/* Header */}
             <Section className="bg-rose-800 rounded-t-lg px-8 py-6 text-center">
               <Img
@@ -103,7 +102,8 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
                 Platba byla úspěšně přijata
               </Heading>
               <Text className="text-gray-500 text-sm mt-2 mb-0">
-                Obdrželi jsme Vaši platbu. Objednávku nyní připravujeme k odeslání.
+                Obdrželi jsme Vaši platbu. Objednávku nyní připravujeme k
+                odeslání.
               </Text>
             </Section>
 
@@ -114,17 +114,21 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
               </Text>
               <Row className="mb-2">
                 <Column>
-                  <Text className="m-0 text-sm text-gray-500">ID objednávky</Text>
+                  <Text className="m-0 text-sm text-gray-500">
+                    ID objednávky
+                  </Text>
                 </Column>
                 <Column align="right">
                   <Text className="m-0 text-sm text-gray-700 font-medium">
-                    {order.id.toString().slice(0, 8).toUpperCase()}
+                    {order.id.toString().slice(-6).toUpperCase()}
                   </Text>
                 </Column>
               </Row>
               <Row className="mb-2">
                 <Column>
-                  <Text className="m-0 text-sm text-gray-500">Datum platby</Text>
+                  <Text className="m-0 text-sm text-gray-500">
+                    Datum platby
+                  </Text>
                 </Column>
                 <Column align="right">
                   <Text className="m-0 text-sm text-gray-700 font-medium">
@@ -134,7 +138,9 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
               </Row>
               <Row className="mb-2">
                 <Column>
-                  <Text className="m-0 text-sm text-gray-500">Způsob platby</Text>
+                  <Text className="m-0 text-sm text-gray-500">
+                    Způsob platby
+                  </Text>
                 </Column>
                 <Column align="right">
                   <Text className="m-0 text-sm text-gray-700 font-medium">
@@ -164,7 +170,9 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
               {order.orderitems.map((item) => (
                 <Row key={item.productId} className="mb-2">
                   <Column>
-                    <Text className="m-0 text-sm text-gray-700">{item.name}</Text>
+                    <Text className="m-0 text-sm text-gray-700">
+                      {item.name}
+                    </Text>
                   </Column>
                   <Column align="right">
                     <Text className="m-0 text-sm text-gray-500">
@@ -184,7 +192,6 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
                 © {new Date().getFullYear()} Víno Iris. Všechna práva vyhrazena.
               </Text>
             </Section>
-
           </Container>
         </Body>
       </Tailwind>
