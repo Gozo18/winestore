@@ -1,39 +1,46 @@
-import { BottleWine, Headset, Van, WalletCards } from "lucide-react"
+import { CreditCard, Phone, Truck, Wine } from "lucide-react"
 import { Card, CardContent } from "./ui/card"
+
+const boxes = [
+  {
+    icon: Truck,
+    title: "Doprava zdarma",
+    description: "Doprava zdarma pro objednávky nad 2500,- Kč",
+  },
+  {
+    icon: Wine,
+    title: "Široký výběr vína",
+    description: "Pro každého milovníka vína máme něco v nabídce",
+  },
+  {
+    icon: CreditCard,
+    title: "Flexibilní platba",
+    description: "Platba kartou, PayPal nebo dobírkou",
+  },
+  {
+    icon: Phone,
+    title: "Potřebujete poradit?",
+    description: "Neváhejte nás kontaktovat, rádi vám pomůžeme",
+  },
+]
 
 const IconBoxes = () => {
   return (
     <div>
       <Card>
-        <CardContent className="grid md:grid-cols-4 gap-4 p-4">
-          <div className="space-y-2 flex flex-col items-center text-center">
-            <Van />
-            <div className="text-sm font-bold">Doprava zdarma</div>
-            <div className="text-sm text-muted-foreground">
-              Doprava zdarma pro objednávky nad 2500,- Kč
+        <CardContent className="grid md:grid-cols-4 gap-6 p-6">
+          {boxes.map(({ icon: Icon, title, description }) => (
+            <div
+              key={title}
+              className="flex flex-col items-center text-center gap-3"
+            >
+              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-rose-50 text-rose-700">
+                <Icon size={28} strokeWidth={1.5} />
+              </div>
+              <div className="text-sm font-bold">{title}</div>
+              <div className="text-sm text-muted-foreground">{description}</div>
             </div>
-          </div>
-          <div className="space-y-2 flex flex-col items-center text-center">
-            <BottleWine />
-            <div className="text-sm font-bold">Široký výběr vína</div>
-            <div className="text-sm text-muted-foreground">
-              Pro každého milovníka vína máme něco v nabídce
-            </div>
-          </div>
-          <div className="space-y-2 flex flex-col items-center text-center">
-            <WalletCards />
-            <div className="text-sm font-bold">Flexibilní platba</div>
-            <div className="text-sm text-muted-foreground">
-              Platba kartou, PayPal nebo dobírkou
-            </div>
-          </div>
-          <div className="space-y-2 flex flex-col items-center text-center">
-            <Headset />
-            <div className="text-sm font-bold">Potřebujete poradit?</div>
-            <div className="text-sm text-muted-foreground">
-              Neváhejte nás kontaktovat, rádi vám pomůžeme
-            </div>
-          </div>
+          ))}
         </CardContent>
       </Card>
     </div>
