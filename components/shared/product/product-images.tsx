@@ -18,8 +18,8 @@ const ProductImages = ({
     <div className="space-y-4">
       <Image
         src={images[current]}
-        width={1000}
-        height={1000}
+        width={400}
+        height={400}
         className="min-h-[300px] object-cover object-center"
         alt={`${brand} - ${name}`}
       />
@@ -30,7 +30,7 @@ const ProductImages = ({
             onClick={() => setCurrent(index)}
             className={cn(
               "border mr-2 cursor-pointer hover:border-orange-600",
-              current === index && "border-orange-500"
+              current === index && "border-orange-500",
             )}
           >
             <Image
