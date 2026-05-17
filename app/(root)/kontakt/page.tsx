@@ -71,8 +71,7 @@ const KontaktPage = () => {
               <h2 className="font-semibold mb-1">Otevírací doba</h2>
               <div className="text-muted-foreground space-y-0.5">
                 <p>Pondělí – Pátek: 9:00 – 17:00</p>
-                <p>Sobota: 10:00 – 16:00</p>
-                <p>Neděle: zavřeno</p>
+                <p>Sobota - Neděle: 10:00 – 17:00</p>
               </div>
             </div>
           </div>
@@ -80,7 +79,7 @@ const KontaktPage = () => {
 
         <div className="overflow-hidden rounded-lg border shadow-sm min-h-[400px]">
           <iframe
-            src="https://www.google.com/maps?q=Podhradn%C3%AD+180,+692+01+Pavlov&output=embed"
+            src="https://www.google.com/maps?q=V%C3%ADno+Iris,+Podhradn%C3%AD+180,+692+01+Pavlov&output=embed"
             width="100%"
             height="100%"
             style={{ border: 0, minHeight: "400px" }}
