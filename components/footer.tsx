@@ -21,7 +21,10 @@ const Footer = () => {
           </Link>
           &copy; {currentYear}
         </div>
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+          <Link href="/kontakt" className="hover:underline hover:text-foreground transition-colors">
+            Kontakt
+          </Link>
           <Link href="/obchodni-podminky" className="hover:underline hover:text-foreground transition-colors">
             Obchodní podmínky
           </Link>
