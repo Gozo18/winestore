@@ -7,17 +7,17 @@ const links = [
   {
     href: "/hledat?category=bílé+víno",
     label: "bílá vína",
-    image: "/images/miniatura.png",
+    image: "/images/miniaturabila.jpg",
   },
   {
     href: "/hledat?category=červené+víno",
     label: "červená vína",
-    image: "/images/miniatura.png",
+    image: "/images/miniaturacervena.jpg",
   },
   {
     href: "/hledat?category=růžové+víno",
     label: "růžová vína",
-    image: "/images/miniatura.png",
+    image: "/images/miniaturaruzova.jpg",
   },
 ]
 
