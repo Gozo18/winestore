@@ -17,8 +17,8 @@ const ProductCard = async ({ product }: { product: Product }) => {
           <Image
             src={product.images[0]}
             alt={product.name}
-            width={300}
-            height={300}
+            width={250}
+            height={250}
             priority={true}
             className="hidden lg:block"
           />

@@ -75,43 +75,76 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
       <Preview>Zobrazení potvrzení objednávky</Preview>
       <Tailwind>
         <Head />
-        <Body className="font-sans bg-white">
-          <Container className="max-w-xl">
-            <Heading>Potvrzení o nákupu</Heading>
-            <Section>
+        <Body className="font-sans bg-gray-50">
+          <Container className="max-w-xl mx-auto">
+            {/* Header */}
+            <Section className="bg-rose-800 rounded-t-lg px-8 py-6 text-center">
+              <Img
+                src={`${process.env.NEXT_PUBLIC_SERVER_URL}/images/logo_only.png`}
+                alt="Víno Iris"
+                width="60"
+                className="mx-auto mb-3"
+              />
+              <Text className="text-white text-2xl font-bold m-0 tracking-wide">
+                Víno Iris
+              </Text>
+              <Text className="text-rose-200 text-sm m-0 mt-1">
+                Váš oblíbený vinný obchod
+              </Text>
+            </Section>
+
+            {/* Title */}
+            <Section className="bg-white px-8 py-6 text-center border-b border-gray-100">
+              <Heading className="text-gray-800 text-xl m-0">
+                Děkujeme za Vaši objednávku!
+              </Heading>
+              <Text className="text-gray-500 text-sm mt-2 mb-0">
+                Vaše objednávka byla úspěšně přijata a brzy se pustíme do její
+                přípravy.
+              </Text>
+            </Section>
+
+            {/* Order meta */}
+            <Section className="bg-white px-8 py-4 border-b border-gray-100">
               <Row>
                 <Column>
-                  <Text className="mb-0 mr-4 text-gray-500 whitespace-nowrap text-nowrap">
+                  <Text className="mb-0 text-xs text-gray-400 uppercase tracking-wide">
                     ID objednávky
                   </Text>
-                  <Text className="mt-0 mr-4">{order.id.toString()}</Text>
+                  <Text className="mt-1 text-sm text-gray-700 font-medium">
+                    {order.id.toString().slice(0, 8).toUpperCase()}
+                  </Text>
                 </Column>
                 <Column>
-                  <Text className="mb-0 mr-4 text-gray-500 whitespace-nowrap text-nowrap">
+                  <Text className="mb-0 text-xs text-gray-400 uppercase tracking-wide">
                     Datum objednávky
                   </Text>
-                  <Text className="mt-0 mr-4">
+                  <Text className="mt-1 text-sm text-gray-700 font-medium">
                     {dateFormatter.format(order.createdAt)}
                   </Text>
                 </Column>
                 <Column>
-                  <Text className="mb-0 mr-4 text-gray-500 whitespace-nowrap text-nowrap">
+                  <Text className="mb-0 text-xs text-gray-400 uppercase tracking-wide">
                     Celková částka
                   </Text>
-                  <Text className="mt-0 mr-4">
-                    {formatCurrency(order.totalPrice)}
+                  <Text className="mt-1 text-sm text-rose-800 font-bold">
+                    {formatCurrency(order.totalPrice)} Kč
                   </Text>
                 </Column>
               </Row>
             </Section>
-            <Section className="border border-solid border-gray-500 rounded-lg p-4 md:p-6 my-4">
+            {/* Products */}
+            <Section className="bg-white px-8 pt-4 pb-2 border-b border-gray-100">
+              <Text className="text-xs text-gray-400 uppercase tracking-wide mb-3">
+                Objednané položky
+              </Text>
               {order.orderitems.map((item) => (
-                <Row key={item.productId} className="mt-8">
-                  <Column className="w-20">
+                <Row key={item.productId} className="mb-4">
+                  <Column className="w-16">
                     <Img
-                      width="80"
+                      width="56"
                       alt={item.name}
-                      className="rounded"
+                      className="rounded-md"
                       src={
                         item.image.startsWith("/")
                           ? `${process.env.NEXT_PUBLIC_SERVER_URL}${item.image}`
@@ -119,27 +152,63 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
                       }
                     />
                   </Column>
-                  <Column className="align-top">
-                    {item.name} x {item.qty}
+                  <Column className="align-middle pl-3">
+                    <Text className="m-0 text-sm text-gray-800 font-medium">
+                      {item.name}
+                    </Text>
+                    <Text className="m-0 text-xs text-gray-400">
+                      Množství: {item.qty} ks
+                    </Text>
                   </Column>
-                  <Column align="right" className="align-top">
-                    {formatCurrency(item.price)}
+                  <Column align="right" className="align-middle">
+                    <Text className="m-0 text-sm text-gray-700 font-semibold">
+                      {formatCurrency(item.price)} Kč
+                    </Text>
                   </Column>
                 </Row>
               ))}
+            </Section>
+
+            {/* Price summary */}
+            <Section className="bg-white px-8 py-4 rounded-b-lg">
               {[
-                { name: "Položky", price: order.itemsPrice },
+                { name: "Položky celkem", price: order.itemsPrice },
                 { name: "DPH", price: order.taxPrice },
                 { name: "Doprava", price: order.shippingPrice },
-                { name: "Celkem", price: order.totalPrice },
               ].map(({ name, price }) => (
-                <Row key={name} className="py-1">
-                  <Column align="right">{name}: </Column>
-                  <Column align="right" width={70} className="align-top">
-                    <Text className="m-0">{formatCurrency(price)}</Text>
+                <Row key={name} className="py-0.5">
+                  <Column>
+                    <Text className="m-0 text-sm text-gray-500">{name}</Text>
+                  </Column>
+                  <Column align="right">
+                    <Text className="m-0 text-sm text-gray-600">
+                      {formatCurrency(price)} Kč
+                    </Text>
                   </Column>
                 </Row>
               ))}
+              <Row className="border-t border-gray-200 mt-2 pt-2">
+                <Column>
+                  <Text className="m-0 text-sm font-bold text-gray-800">
+                    Celkem k úhradě
+                  </Text>
+                </Column>
+                <Column align="right">
+                  <Text className="m-0 text-base font-bold text-rose-800">
+                    {formatCurrency(order.totalPrice)} Kč
+                  </Text>
+                </Column>
+              </Row>
+            </Section>
+
+            {/* Footer */}
+            <Section className="px-8 py-6 text-center">
+              <Text className="text-xs text-gray-400 m-0">
+                V případě dotazů nás neváhejte kontaktovat.
+              </Text>
+              <Text className="text-xs text-gray-400 m-0 mt-1">
+                © {new Date().getFullYear()} Víno Iris. Všechna práva vyhrazena.
+              </Text>
             </Section>
           </Container>
         </Body>
