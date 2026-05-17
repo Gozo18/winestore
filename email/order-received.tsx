@@ -115,7 +115,7 @@ export default function OrderReceivedEmail({ order }: OrderReceivedProps) {
                     Číslo objednávky
                   </Text>
                   <Text className="mt-1 text-sm text-gray-700 font-medium">
-                    {order.id.toString().slice(-6).toUpperCase()}
+                    {order.id.toString().slice(-6)}
                   </Text>
                 </Column>
                 <Column>

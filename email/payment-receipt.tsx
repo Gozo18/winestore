@@ -120,7 +120,7 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
                 </Column>
                 <Column align="right">
                   <Text className="m-0 text-sm text-gray-700 font-medium">
-                    {order.id.toString().slice(-6).toUpperCase()}
+                    {order.id.toString().slice(-6)}
                   </Text>
                 </Column>
               </Row>

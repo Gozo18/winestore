@@ -111,7 +111,7 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
                     ID objednávky
                   </Text>
                   <Text className="mt-1 text-sm text-gray-700 font-medium">
-                    {order.id.toString().slice(-6).toUpperCase()}
+                    {order.id.toString().slice(-6)}
                   </Text>
                 </Column>
                 <Column>
