@@ -19,7 +19,7 @@ import dotenv from "dotenv"
 dotenv.config()
 import crypto from "crypto"
 
-PurchaseReceiptEmail.PreviewProps = {
+OrderReceivedEmail.PreviewProps = {
   order: {
     id: crypto.randomUUID(),
     userId: "123",
@@ -50,29 +50,31 @@ PurchaseReceiptEmail.PreviewProps = {
       image: x.images[0],
       price: x.price.toString(),
     })),
-    isDelivered: true,
+    isDelivered: false,
     deliveredAt: new Date(),
-    isPaid: true,
+    isPaid: false,
     paidAt: new Date(),
     paymentResult: {
       id: "123",
-      status: "succeeded",
-      pricePaid: "100",
+      status: "pending",
+      pricePaid: "0",
       email_address: "test@test.com",
     },
   },
-} satisfies OrderInformationProps
+} satisfies OrderReceivedProps
 
-const dateFormatter = new Intl.DateTimeFormat("cs", { dateStyle: "medium" })
+const dateFormatter = new Intl.DateTimeFormat("cs", { dateStyle: "long" })
 
-type OrderInformationProps = {
+type OrderReceivedProps = {
   order: Order
 }
 
-export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
+export default function OrderReceivedEmail({ order }: OrderReceivedProps) {
+  const isCOD = order.paymentMethod === "Hotovost"
+
   return (
     <Html>
-      <Preview>Vaše objednávka byla odeslána – Víno Iris</Preview>
+      <Preview>Objednávka přijata – Víno Iris</Preview>
       <Tailwind>
         <Head />
         <Body className="font-sans bg-gray-50">
@@ -97,19 +99,21 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
             {/* Title */}
             <Section className="bg-white px-8 py-6 text-center border-b border-gray-100">
               <Heading className="text-gray-800 text-xl m-0">
-                Vaše objednávka byla odeslána!
+                Vaše objednávka byla přijata!
               </Heading>
               <Text className="text-gray-500 text-sm mt-2 mb-0">
-                Vaše objednávka je na cestě. Brzy ji obdržíte.
+                {isCOD
+                  ? "Objednávku připravujeme. Platbu uhradíte při převzetí zásilky."
+                  : "Objednávka čeká na zaplacení. Po přijetí platby ji začneme připravovat."}
               </Text>
             </Section>
 
             {/* Order meta */}
-            <Section className="bg-white px-8 py-4 border-b border-gray-100">
+            <Section className="bg-white px-8 py-5 border-b border-gray-100">
               <Row>
                 <Column>
                   <Text className="mb-0 text-xs text-gray-400 uppercase tracking-wide">
-                    ID objednávky
+                    Číslo objednávky
                   </Text>
                   <Text className="mt-1 text-sm text-gray-700 font-medium">
                     {order.id.toString().slice(0, 8).toUpperCase()}
@@ -125,18 +129,18 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
                 </Column>
                 <Column>
                   <Text className="mb-0 text-xs text-gray-400 uppercase tracking-wide">
-                    Celková částka
+                    Způsob platby
                   </Text>
-                  <Text className="mt-1 text-sm text-rose-800 font-bold">
-                    {formatCurrency(order.totalPrice)}
+                  <Text className="mt-1 text-sm text-gray-700 font-medium">
+                    {order.paymentMethod}
                   </Text>
                 </Column>
               </Row>
             </Section>
 
             {/* Products */}
-            <Section className="bg-white px-8 pt-4 pb-2 border-b border-gray-100">
-              <Text className="text-xs text-gray-400 uppercase tracking-wide mb-3">
+            <Section className="bg-white px-8 pt-5 pb-3 border-b border-gray-100">
+              <Text className="text-xs text-gray-400 uppercase tracking-wide mb-3 m-0">
                 Objednané položky
               </Text>
               {order.orderitems.map((item) => (
@@ -171,7 +175,7 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
             </Section>
 
             {/* Price summary */}
-            <Section className="bg-white px-8 py-4 rounded-b-lg">
+            <Section className="bg-white px-8 py-4 border-b border-gray-100">
               {[
                 { name: "Položky celkem", price: order.itemsPrice },
                 { name: "DPH", price: order.taxPrice },
@@ -202,10 +206,26 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
               </Row>
             </Section>
 
+            {/* Shipping address */}
+            <Section className="bg-white px-8 py-5 rounded-b-lg">
+              <Text className="text-xs text-gray-400 uppercase tracking-wide mb-2 m-0">
+                Dodací adresa
+              </Text>
+              <Text className="m-0 text-sm text-gray-700 font-medium">
+                {order.shippingAddress.fullName}
+              </Text>
+              <Text className="m-0 text-sm text-gray-600">
+                {order.shippingAddress.streetAddress}
+              </Text>
+              <Text className="m-0 text-sm text-gray-600">
+                {order.shippingAddress.postalCode} {order.shippingAddress.city}
+              </Text>
+            </Section>
+
             {/* Footer */}
             <Section className="px-8 py-6 text-center">
               <Text className="text-xs text-gray-400 m-0">
-                V případě dotazů nás neváhejte kontaktovat.
+                O dalším stavu objednávky Vás budeme informovat e-mailem.
               </Text>
               <Text className="text-xs text-gray-400 m-0 mt-1">
                 © {new Date().getFullYear()} Víno Iris. Všechna práva vyhrazena.
