@@ -1,6 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { APP_NAME } from "@/lib/constants"
+import CookieSettingsLink from "@/components/cookie-settings-link"
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -28,6 +29,7 @@ const Footer = () => {
           <Link href="/obchodni-podminky" className="hover:underline hover:text-foreground transition-colors">
             Obchodní podmínky
           </Link>
+          <CookieSettingsLink />
         </div>
       </div>
     </footer>

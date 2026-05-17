@@ -5,6 +5,8 @@ import { APP_NAME, APP_DESCRIPTION, SERVER_URL } from "@/lib/constants"
 import { ThemeProvider } from "next-themes"
 import { Toaster } from "@/components/ui/toaster"
 import { Cairo_Play } from "next/font/google"
+import CookieConsent from "@/components/cookie-consent"
+import GoogleAnalytics from "@/components/google-analytics"
 
 const cairoPlay = Cairo_Play({
   subsets: ["latin", "arabic"],
@@ -38,6 +40,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <CookieConsent />
+          <GoogleAnalytics />
           <Toaster />
         </ThemeProvider>
       </body>
