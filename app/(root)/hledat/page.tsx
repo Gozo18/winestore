@@ -203,7 +203,7 @@ const SearchPage = async (props: {
                   className={`${rating === r.toString() && "font-bold"}`}
                   href={getFilterUrl({ r: `${r}` })}
                 >
-                  {`${r} hvězdy a více`}
+                  {`${r} hvězd a více`}
                 </Link>
               </li>
             ))}
