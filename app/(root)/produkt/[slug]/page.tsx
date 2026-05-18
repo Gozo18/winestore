@@ -9,6 +9,7 @@ import { getMyCart } from "@/lib/actions/cart.actions"
 import ReviewList from "./review-list"
 import { auth } from "@/auth"
 import Rating from "@/components/shared/product/rating"
+import BackButton from "@/components/shared/back-button"
 
 const ProductDetailsPage = async (props: {
   params: Promise<{ slug: string }>
@@ -30,6 +31,7 @@ const ProductDetailsPage = async (props: {
   return (
     <>
       <section>
+        <BackButton />
         <div className="grid grid-cols-1 md:grid-cols-5">
           {/* Images */}
           <div className="col-span-2">
@@ -71,7 +73,7 @@ const ProductDetailsPage = async (props: {
               <p>
                 Kyselinky: <span className="font-semibold">{acid}g</span>
               </p>
-              <p className="my-4">{product.description}</p>
+              <p className="my-4 whitespace-pre-line">{product.description}</p>
             </div>
           </div>
           {/* Actions */}
