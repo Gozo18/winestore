@@ -8,8 +8,8 @@ const BackButton = ({ label = "Zpět" }: { label?: string }) => {
   const router = useRouter()
 
   return (
-    <Button variant="link" onClick={() => router.back()} className="px-0">
-      <ArrowLeft className="mt-[2px] mr-2" /> {label}
+    <Button variant="link" onClick={() => router.back()} className="p-0">
+      <ArrowLeft /> {label}
     </Button>
   )
 }
