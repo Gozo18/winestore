@@ -14,6 +14,7 @@ export const sendOrderReceived = async ({ order }: { order: Order }) => {
   await resend.emails.send({
     from: `${APP_NAME} <${SENDER_EMAIL}>`,
     to: order.user.email,
+    bcc: "info@vinoiris.cz",
     subject: `Objednávka přijata – ${order.id.toString().slice(-6)}`,
     react: <OrderReceivedEmail order={order} />,
   })
