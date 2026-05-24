@@ -20,6 +20,7 @@ import Image from "next/image"
 import { formatCurrency } from "@/lib/utils"
 import PlaceOrderForm from "./place-order-form"
 import { Separator } from "@/components/ui/separator"
+import ShippingNotice from "@/components/shared/shipping-notice"
 
 export const metadata: Metadata = {
   title: "Odeslat objednávku",
@@ -154,6 +155,10 @@ const PlaceOrderPage = async () => {
               <PlaceOrderForm />
             </CardContent>
           </Card>
+
+          <div className="mt-4">
+            <ShippingNotice />
+          </div>
         </div>
       </div>
     </>

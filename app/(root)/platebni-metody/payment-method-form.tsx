@@ -27,6 +27,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { updateUserPaymentMethod } from "@/lib/actions/user.actions"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import ShippingNotice from "@/components/shared/shipping-notice"
 
 const PAYMENT_METHOD_META: Record<
   string,
@@ -180,6 +181,8 @@ const PaymentMethodForm = ({
           </form>
         </Form>
       </Card>
+
+      <ShippingNotice />
     </div>
   )
 }
