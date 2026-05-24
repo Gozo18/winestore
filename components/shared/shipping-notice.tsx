@@ -8,7 +8,8 @@ const ShippingNotice = () => {
         <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
         <p className="text-sm text-muted-foreground leading-relaxed">
           Po odeslání objednávky vás budeme kontaktovat pro domluvení
-          individuální dopravy a následně její ceny.
+          individuální dopravy a následně její ceny i celkové ceny při slevovém
+          kupónu.
         </p>
       </div>
     </Card>
