@@ -29,11 +29,23 @@ export const shippingAddressDefaultValues = {
   phone: "",
 }
 
+export const guestShippingAddressDefaultValues = {
+  ...shippingAddressDefaultValues,
+  email: "",
+}
+
 export const PAYMENT_METHODS = process.env.PAYMENT_METHODS
   ? process.env.PAYMENT_METHODS.split(", ")
   : ["PayPal", "Stripe", "Hotovost"]
 export const DEFAULT_PAYMENT_METHOD =
   process.env.DEFAULT_PAYMENT_METHOD || "PayPal"
+
+export const DELIVERY_METHODS = ["Osobně na prodejně", "Messenger"] as const
+export const DEFAULT_DELIVERY_METHOD = "Osobně na prodejně"
+export const DELIVERY_PRICES: Record<string, number> = {
+  "Osobně na prodejně": 0,
+  Messenger: 200,
+}
 
 export const PAGE_SIZE = Number(process.env.PAGE_SIZE) || 12
 

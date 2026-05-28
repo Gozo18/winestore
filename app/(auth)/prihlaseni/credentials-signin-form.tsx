@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { signInDefaultValues } from "@/lib/constants"
-import Link from "next/link"
 import { useActionState } from "react"
 import { useFormStatus } from "react-dom"
 import { signInWithCredentials } from "@/lib/actions/user.actions"
@@ -62,12 +61,6 @@ const CredentialsSignInForm = () => {
         {data && !data.success && (
           <div className="text-center text-destructive">{data.message}</div>
         )}
-        <div className="text-sm text-center text-muted-foreground">
-          Nemáte účet?{" "}
-          <Link href="/registrace" target="_self" className="link">
-            Zaregistrujte se.
-          </Link>
-        </div>
       </div>
     </form>
   )

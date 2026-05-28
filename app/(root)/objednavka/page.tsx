@@ -1,11 +1,11 @@
-import { auth } from "@/auth"
 import { getMyCart } from "@/lib/actions/cart.actions"
-import { getUserById } from "@/lib/actions/user.actions"
+import { getCurrentUser } from "@/lib/current-user"
 import { ShippingAddress } from "@/types"
 import { Metadata } from "next"
 import { redirect } from "next/navigation"
 import CheckoutSteps from "@/components/shared/checkout-steps"
 import { Card, CardContent } from "@/components/ui/card"
+import { DELIVERY_PRICES } from "@/lib/constants"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
@@ -28,27 +28,27 @@ export const metadata: Metadata = {
 
 const PlaceOrderPage = async () => {
   const cart = await getMyCart()
-  const session = await auth()
-  const userId = session?.user?.id
-
-  if (!userId) throw new Error("Uživatel nenalezen.")
-
-  const user = await getUserById(userId)
+  const user = await getCurrentUser()
+  if (!user) redirect("/dodaci-adresa")
 
   if (!cart || cart.items.length === 0) redirect("/kosik")
   if (!user.address) redirect("/dodaci-adresa")
   if (!user.paymentMethod) redirect("/platebni-metody")
+  if (!user.deliveryMethod) redirect("/platebni-metody")
 
   const userAddress = user.address as ShippingAddress
 
-  const COD_SURCHARGE = 50
+  const COD_SURCHARGE = 30
+  const isPickup = user.deliveryMethod === "Osobně na prodejně"
   const isCOD = user.paymentMethod === "Hotovost"
-  const displayShippingPrice = isCOD
-    ? (Number(cart.shippingPrice) + COD_SURCHARGE).toFixed(2)
-    : cart.shippingPrice
-  const displayTotalPrice = isCOD
-    ? (Number(cart.totalPrice) + COD_SURCHARGE).toFixed(2)
-    : cart.totalPrice
+  const codFee = isCOD && !isPickup ? COD_SURCHARGE : 0
+  const deliveryFee = DELIVERY_PRICES[user.deliveryMethod] ?? 0
+  const displayShippingPrice = (deliveryFee + codFee).toFixed(2)
+  const displayTotalPrice = (
+    Number(cart.itemsPrice) +
+    deliveryFee +
+    codFee
+  ).toFixed(2)
 
   return (
     <>
@@ -66,6 +66,18 @@ const PlaceOrderPage = async () => {
               </p>
               <div className="mt-3">
                 <Link href="/dodaci-adresa">
+                  <Button variant="outline">Upravit</Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4 gap-4">
+              <h2 className="text-xl pb-4">Doprava</h2>
+              <p>{user.deliveryMethod}</p>
+              <div className="mt-3">
+                <Link href="/platebni-metody">
                   <Button variant="outline">Upravit</Button>
                 </Link>
               </div>
@@ -139,9 +151,9 @@ const PlaceOrderPage = async () => {
               <div className="flex justify-between">
                 <div>
                   Doprava &nbsp;
-                  {isCOD && (
+                  {codFee > 0 && (
                     <span className="text-black/50 text-sm">
-                      (včetně dobírky 50 Kč)
+                      (včetně dobírky 30 Kč)
                     </span>
                   )}
                 </div>

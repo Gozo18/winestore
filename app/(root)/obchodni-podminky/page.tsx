@@ -68,7 +68,7 @@ const ObchodniPodminkyPage = () => {
         <ul className="list-disc list-inside space-y-1 pl-2">
           <li>Online platební kartou přes platební bránu Stripe</li>
           <li>Přes službu PayPal</li>
-          <li>Dobírkou při převzetí zásilky (příplatek 50 Kč)</li>
+          <li>Dobírkou při převzetí zásilky (příplatek 30 Kč)</li>
         </ul>
         <p>
           Kupní cena je splatná před expedicí zboží, s výjimkou platby na

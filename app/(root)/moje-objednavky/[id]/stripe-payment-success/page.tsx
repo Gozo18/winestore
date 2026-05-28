@@ -8,10 +8,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 
 const SuccessPage = async (props: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ payment_intent: string }>
+  searchParams: Promise<{ payment_intent: string; token?: string }>
 }) => {
   const { id } = await props.params
-  const { payment_intent: paymentIntentId } = await props.searchParams
+  const { payment_intent: paymentIntentId, token } = await props.searchParams
 
   // Fetch order
   const order = await getOrderById(id)
@@ -31,7 +31,9 @@ const SuccessPage = async (props: {
   // Check if payment is successful
   const isSuccess = paymentIntent.status === "succeeded"
 
-  if (!isSuccess) return redirect(`/moje-objednavky/${id}`)
+  const tokenSuffix = token ? `?token=${token}` : ""
+
+  if (!isSuccess) return redirect(`/moje-objednavky/${id}${tokenSuffix}`)
 
   return (
     <div className="max-w-4xl w-full mx-auto space-y-8">
@@ -39,7 +41,9 @@ const SuccessPage = async (props: {
         <h1 className="h1-bold">Děkujeme za vaši objednávku!</h1>
         <div>Vaše objednávka byla zaplacena a chystáme ji k odeslání.</div>
         <Button asChild>
-          <Link href={`/moje-objednavky/${id}`}>Náhled objednávky</Link>
+          <Link href={`/moje-objednavky/${id}${tokenSuffix}`}>
+            Náhled objednávky
+          </Link>
         </Button>
       </div>
     </div>

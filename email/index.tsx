@@ -11,29 +11,32 @@ import PurchaseReceiptEmail from "./purchase-receipt"
 const resend = new Resend(process.env.RESEND_API_KEY as string)
 
 export const sendOrderReceived = async ({ order }: { order: Order }) => {
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: `${APP_NAME} <${SENDER_EMAIL}>`,
     to: order.user.email,
     bcc: "info@vinoiris.cz",
     subject: `Objednávka přijata – ${order.id.toString().slice(-6)}`,
     react: <OrderReceivedEmail order={order} />,
   })
+  if (error) throw new Error(`Resend chyba: ${JSON.stringify(error)}`)
 }
 
 export const sendPaymentReceipt = async ({ order }: { order: Order }) => {
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: `${APP_NAME} <${SENDER_EMAIL}>`,
     to: order.user.email,
     subject: `Platba přijata – objednávka ${order.id.toString().slice(-6)}`,
     react: <PaymentReceiptEmail order={order} />,
   })
+  if (error) throw new Error(`Resend chyba: ${JSON.stringify(error)}`)
 }
 
 export const sendPurchaseReceipt = async ({ order }: { order: Order }) => {
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: `${APP_NAME} <${SENDER_EMAIL}>`,
     to: order.user.email,
     subject: `Vaše objednávka byla odeslána – ${order.id.toString().slice(-6)}`,
     react: <PurchaseReceiptEmail order={order} />,
   })
+  if (error) throw new Error(`Resend chyba: ${JSON.stringify(error)}`)
 }

@@ -28,6 +28,9 @@ OrderReceivedEmail.PreviewProps = {
       email: "test@test.com",
     },
     paymentMethod: "Stripe",
+    deliveryMethod: "Osobně na prodejně",
+    accessToken: "preview-token",
+    guestEmail: null,
     shippingAddress: {
       fullName: "John Doe",
       streetAddress: "123 Main st",
@@ -135,6 +138,18 @@ export default function OrderReceivedEmail({ order }: OrderReceivedProps) {
                   </Text>
                 </Column>
               </Row>
+              {order.deliveryMethod && (
+                <Row className="mt-3">
+                  <Column>
+                    <Text className="mb-0 text-xs text-gray-400 uppercase tracking-wide">
+                      Způsob dopravy
+                    </Text>
+                    <Text className="mt-1 text-sm text-gray-700 font-medium">
+                      {order.deliveryMethod}
+                    </Text>
+                  </Column>
+                </Row>
+              )}
             </Section>
 
             {/* Products */}
@@ -220,6 +235,24 @@ export default function OrderReceivedEmail({ order }: OrderReceivedProps) {
                 {order.shippingAddress.postalCode} {order.shippingAddress.city}
               </Text>
             </Section>
+
+            {/* CTA */}
+            {order.accessToken && (
+              <Section className="bg-white px-8 pb-6 text-center">
+                <a
+                  href={`${process.env.NEXT_PUBLIC_SERVER_URL}/moje-objednavky/${order.id}?token=${order.accessToken}`}
+                  className="inline-block bg-rose-800 text-white text-sm font-semibold px-5 py-3 rounded-md no-underline"
+                >
+                  Zobrazit objednávku
+                </a>
+                {order.guestEmail && (
+                  <Text className="text-xs text-gray-400 mt-3 m-0">
+                    Tento odkaz si uložte – slouží k přístupu k objednávce bez
+                    přihlášení.
+                  </Text>
+                )}
+              </Section>
+            )}
 
             {/* Footer */}
             <Section className="px-8 py-6 text-center">

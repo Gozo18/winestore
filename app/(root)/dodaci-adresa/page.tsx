@@ -1,11 +1,10 @@
-import { auth } from "@/auth"
 import { getMyCart } from "@/lib/actions/cart.actions"
-import { getUserById } from "@/lib/actions/user.actions"
 import { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { ShippingAddress } from "@/types"
 import ShippingAddressForm from "./shipping-address-form"
 import CheckoutSteps from "@/components/shared/checkout-steps"
+import { getCurrentUser } from "@/lib/current-user"
 
 export const metadata: Metadata = {
   title: "Dodací adresa",
@@ -18,18 +17,17 @@ const ShippingAddressPage = async () => {
     redirect("/kosik")
   }
 
-  const session = await auth()
-
-  const userId = session?.user?.id
-
-  if (!userId) throw new Error("No user ID")
-
-  const user = await getUserById(userId)
+  const user = await getCurrentUser()
+  const isGuest = !user || user.role === "guest"
 
   return (
     <>
       <CheckoutSteps current={1} />
-      <ShippingAddressForm address={user.address as ShippingAddress} />
+      <ShippingAddressForm
+        address={(user?.address as ShippingAddress) ?? null}
+        isGuest={isGuest}
+        guestEmail={isGuest ? user?.email ?? "" : ""}
+      />
     </>
   )
 }

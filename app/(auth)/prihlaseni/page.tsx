@@ -50,6 +50,24 @@ const SignInPage = async (props: {
         </CardHeader>
         <CardContent>
           <CredentialsSignInForm />
+          <div className="mt-6 pt-4 text-center text-sm text-muted-foreground">
+            <p className="mb-2">Nemáte u nás účet?</p>
+            <p className="mb-2">
+              <Link
+                href="/registrace"
+                target="_self"
+                className="underline text-foreground"
+              >
+                Zaregistrujte se.
+              </Link>
+            </p>
+            <p className="mb-2">nebo</p>
+            <p>
+              <Link href="/dodaci-adresa" className="underline text-foreground">
+                Pokračujte k objednávce bez registrace
+              </Link>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

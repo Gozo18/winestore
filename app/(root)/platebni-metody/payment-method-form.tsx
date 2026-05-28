@@ -3,11 +3,17 @@
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { useTransition } from "react"
-import { paymentMethodSchema } from "@/lib/validators"
+import { checkoutMethodsSchema } from "@/lib/validators"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { DEFAULT_PAYMENT_METHOD, PAYMENT_METHODS } from "@/lib/constants"
+import {
+  DEFAULT_PAYMENT_METHOD,
+  PAYMENT_METHODS,
+  DELIVERY_METHODS,
+  DEFAULT_DELIVERY_METHOD,
+  DELIVERY_PRICES,
+} from "@/lib/constants"
 import {
   Form,
   FormControl,
@@ -22,11 +28,13 @@ import {
   CreditCard,
   Banknote,
   HandCoins,
+  Store,
+  Bike,
 } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { updateUserPaymentMethod } from "@/lib/actions/user.actions"
+import { updateUserCheckoutMethods } from "@/lib/actions/user.actions"
 import { Card } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { cn, formatCurrency } from "@/lib/utils"
 import ShippingNotice from "@/components/shared/shipping-notice"
 
 const PAYMENT_METHOD_META: Record<
@@ -48,31 +56,53 @@ const PAYMENT_METHOD_META: Record<
   Hotovost: {
     icon: <HandCoins className="w-6 h-6" />,
     label: "Dobírka",
-    fee: "+ 50 Kč",
+    fee: "+ 30 Kč",
     description: "Platba při převzetí zásilky",
+  },
+}
+
+const DELIVERY_METHOD_META: Record<
+  string,
+  { icon: React.ReactNode; label: string; description: string }
+> = {
+  "Osobně na prodejně": {
+    icon: <Store className="w-6 h-6" />,
+    label: "Osobně na prodejně",
+    description: "Vyzvednutí ve vinotéce Víno Iris",
+  },
+  Messenger: {
+    icon: <Bike className="w-6 h-6" />,
+    label: "Messenger",
+    description: "Kurýrní rozvoz",
   },
 }
 
 const PaymentMethodForm = ({
   preferredPaymentMethod,
+  preferredDeliveryMethod,
 }: {
   preferredPaymentMethod: string | null
+  preferredDeliveryMethod: string | null
 }) => {
   const router = useRouter()
   const { toast } = useToast()
 
-  const form = useForm<z.infer<typeof paymentMethodSchema>>({
-    resolver: zodResolver(paymentMethodSchema),
+  const form = useForm<z.infer<typeof checkoutMethodsSchema>>({
+    resolver: zodResolver(checkoutMethodsSchema),
     defaultValues: {
-      type: preferredPaymentMethod || DEFAULT_PAYMENT_METHOD,
+      paymentMethod: preferredPaymentMethod || DEFAULT_PAYMENT_METHOD,
+      deliveryMethod: preferredDeliveryMethod || DEFAULT_DELIVERY_METHOD,
     },
   })
 
+  const selectedDelivery = form.watch("deliveryMethod")
+  const isPickup = selectedDelivery === "Osobně na prodejně"
+
   const [isPending, startTransition] = useTransition()
 
-  const onSubmit = async (values: z.infer<typeof paymentMethodSchema>) => {
+  const onSubmit = async (values: z.infer<typeof checkoutMethodsSchema>) => {
     startTransition(async () => {
-      const res = await updateUserPaymentMethod(values)
+      const res = await updateUserCheckoutMethods(values)
 
       if (!res.success) {
         toast({
@@ -90,9 +120,9 @@ const PaymentMethodForm = ({
     <div className="max-w-md mx-auto space-y-4">
       <Card className="p-8">
         <div className="mb-6">
-          <h1 className="h2-bold">Platební metody</h1>
+          <h1 className="h2-bold">Doprava a platba</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Vyberte preferovanou platební metodu pro vaši objednávku.
+            Vyberte způsob dopravy a platby pro vaši objednávku.
           </p>
         </div>
 
@@ -104,9 +134,82 @@ const PaymentMethodForm = ({
           >
             <FormField
               control={form.control}
-              name="type"
+              name="deliveryMethod"
               render={({ field }) => (
                 <FormItem>
+                  <p className="text-sm font-medium mb-2">Doprava</p>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex flex-col gap-3"
+                    >
+                      {DELIVERY_METHODS.map((deliveryMethod) => {
+                        const meta = DELIVERY_METHOD_META[deliveryMethod]
+                        const isSelected = field.value === deliveryMethod
+                        const price = DELIVERY_PRICES[deliveryMethod] ?? 0
+                        const feeLabel =
+                          price === 0 ? "zdarma" : formatCurrency(price)
+                        return (
+                          <label
+                            key={deliveryMethod}
+                            htmlFor={`delivery-${deliveryMethod}`}
+                            className={cn(
+                              "flex items-center gap-4 rounded-lg border-2 p-4 cursor-pointer transition-colors",
+                              isSelected
+                                ? "border-primary bg-primary/5"
+                                : "border-border hover:border-primary/40 hover:bg-muted/40",
+                            )}
+                          >
+                            <RadioGroupItem
+                              value={deliveryMethod}
+                              id={`delivery-${deliveryMethod}`}
+                              className="sr-only"
+                            />
+                            <div
+                              className={cn(
+                                "flex items-center justify-center w-10 h-10 rounded-full shrink-0",
+                                isSelected
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-muted text-muted-foreground",
+                              )}
+                            >
+                              {meta?.icon}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm leading-none mb-1">
+                                {meta?.label ?? deliveryMethod}
+                              </p>
+                              <p className="text-xs text-muted-foreground truncate">
+                                {meta?.description}
+                              </p>
+                            </div>
+                            <span
+                              className={cn(
+                                "text-xs font-semibold shrink-0",
+                                price === 0
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-muted-foreground",
+                              )}
+                            >
+                              {feeLabel}
+                            </span>
+                          </label>
+                        )
+                      })}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="paymentMethod"
+              render={({ field }) => (
+                <FormItem>
+                  <p className="text-sm font-medium mb-2">Platba</p>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -114,7 +217,15 @@ const PaymentMethodForm = ({
                       className="flex flex-col gap-3 [&>:nth-child(-n+2)]:hidden"
                     >
                       {PAYMENT_METHODS.map((paymentMethod) => {
-                        const meta = PAYMENT_METHOD_META[paymentMethod]
+                        const baseMeta = PAYMENT_METHOD_META[paymentMethod]
+                        const meta =
+                          paymentMethod === "Hotovost" && isPickup
+                            ? {
+                                ...baseMeta,
+                                fee: "zdarma",
+                                description: "Platba v hotovosti na prodejně",
+                              }
+                            : baseMeta
                         const isSelected = field.value === paymentMethod
                         return (
                           <label

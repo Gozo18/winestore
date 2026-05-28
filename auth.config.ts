@@ -5,14 +5,13 @@ export const authConfig = {
   providers: [], // Required by NextAuthConfig type
   callbacks: {
     authorized({ request, auth }) {
-      // Array of regex patterns of paths we want to protect
+      // Array of regex patterns of paths we want to protect.
+      // Checkout pages (/dodaci-adresa, /platebni-metody, /objednavka, /moje-objednavky)
+      // are intentionally left open so guests can buy without registering;
+      // those pages enforce their own access via getCurrentUserId / order accessToken.
       const protectedPaths = [
-        /\/dodaci-adresa/,
-        /\/platebni-metody/,
-        /\/place-order/,
         /\/profil/,
         /\/uzivatel\/(.*)/,
-        /\/moje-objednavky\/(.*)/,
         /\/admin/,
       ]
 

@@ -10,21 +10,22 @@ import { prisma } from "@/db/prisma"
 import { CartItem, PaymentResult, ShippingAddress } from "@/types"
 import { paypal } from "../paypal"
 import { revalidatePath } from "next/cache"
-import { PAGE_SIZE } from "../constants"
+import { PAGE_SIZE, DELIVERY_PRICES } from "../constants"
 import { Prisma } from "@prisma/client"
 import { sendOrderReceived, sendPaymentReceipt, sendPurchaseReceipt } from "@/email"
+import { getCurrentUserId } from "../current-user"
+import crypto from "crypto"
 
 // Create order and create the order items
 export async function createOrder() {
   try {
-    const session = await auth()
-    if (!session) throw new Error("Uživatel nepřihlášen.")
-
-    const cart = await getMyCart()
-    const userId = session?.user?.id
+    const userId = await getCurrentUserId()
     if (!userId) throw new Error("Uživatel nenalezen.")
 
+    const cart = await getMyCart()
+
     const user = await getUserById(userId)
+    const isGuest = user.role === "guest"
 
     if (!cart || cart.items.length === 0) {
       return {
@@ -50,30 +51,50 @@ export async function createOrder() {
       }
     }
 
-    const COD_SURCHARGE = 50
+    if (!user.deliveryMethod) {
+      return {
+        success: false,
+        message: "Není vybraný způsob dopravy.",
+        redirectTo: "/platebni-metody",
+      }
+    }
+
+    const COD_SURCHARGE = 30
+    const isPickup = user.deliveryMethod === "Osobně na prodejně"
     const isCOD = user.paymentMethod === "Hotovost"
-    const shippingPrice = isCOD
-      ? (Number(cart.shippingPrice) + COD_SURCHARGE).toFixed(2)
-      : cart.shippingPrice
-    const totalPrice = isCOD
-      ? (Number(cart.totalPrice) + COD_SURCHARGE).toFixed(2)
-      : cart.totalPrice
+    const codFee = isCOD && !isPickup ? COD_SURCHARGE : 0
+    const deliveryFee = DELIVERY_PRICES[user.deliveryMethod] ?? 0
+    const shippingPrice = (deliveryFee + codFee).toFixed(2)
+    const totalPrice = (
+      Number(cart.itemsPrice) +
+      deliveryFee +
+      codFee
+    ).toFixed(2)
 
     // Create order object
     const order = insertOrderSchema.parse({
       userId: user.id,
       shippingAddress: user.address,
       paymentMethod: user.paymentMethod,
+      deliveryMethod: user.deliveryMethod,
       itemsPrice: cart.itemsPrice,
       shippingPrice,
       taxPrice: cart.taxPrice,
       totalPrice,
     })
 
+    const accessToken = crypto.randomBytes(24).toString("hex")
+
     // Create a transaction to create order and order items in database
     const insertedOrderId = await prisma.$transaction(async (tx) => {
       // Create order
-      const insertedOrder = await tx.order.create({ data: order })
+      const insertedOrder = await tx.order.create({
+        data: {
+          ...order,
+          accessToken,
+          guestEmail: isGuest ? user.email : null,
+        },
+      })
       // Create order items from the cart items
       for (const item of cart.items as CartItem[]) {
         await tx.orderItem.create({
@@ -110,21 +131,28 @@ export async function createOrder() {
     })
 
     if (newOrder) {
-      sendOrderReceived({
-        order: {
-          ...newOrder,
-          shippingAddress: newOrder.shippingAddress as ShippingAddress,
-          paymentResult: newOrder.paymentResult as PaymentResult,
-        },
-      })
+      try {
+        console.log("[email] Posílám potvrzení objednávky na:", newOrder.user?.email)
+        await sendOrderReceived({
+          order: {
+            ...newOrder,
+            shippingAddress: newOrder.shippingAddress as ShippingAddress,
+            paymentResult: newOrder.paymentResult as PaymentResult,
+          },
+        })
+        console.log("[email] Potvrzení odesláno.")
+      } catch (emailError) {
+        console.error("[email] Chyba při odesílání potvrzení:", emailError)
+      }
     }
 
+    const tokenSuffix = isGuest ? `?token=${accessToken}` : ""
     let redirectLink = ""
 
     if (user.paymentMethod === "Stripe" || user.paymentMethod === "Paypal") {
-      redirectLink = `/moje-objednavky/${insertedOrderId}#payment-section`
+      redirectLink = `/moje-objednavky/${insertedOrderId}${tokenSuffix}#payment-section`
     } else {
-      redirectLink = `/moje-objednavky/${insertedOrderId}`
+      redirectLink = `/moje-objednavky/${insertedOrderId}${tokenSuffix}`
     }
 
     return {

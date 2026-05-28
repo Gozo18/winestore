@@ -5,6 +5,7 @@ import {
   signInFormSchema,
   signUpFormSchema,
   paymentMethodSchema,
+  checkoutMethodsSchema,
   updateUserSchema,
 } from "../validators"
 import { auth, signIn, signOut } from "@/auth"
@@ -18,6 +19,12 @@ import { PAGE_SIZE } from "../constants"
 import { Prisma } from "@prisma/client"
 import { revalidatePath } from "next/cache"
 import { getMyCart } from "./cart.actions"
+import { cookies } from "next/headers"
+import {
+  GUEST_USER_COOKIE,
+  GUEST_COOKIE_MAX_AGE,
+  getCurrentUserId,
+} from "../current-user"
 
 // Sign in user with credentials
 export async function signInWithCredentials(
@@ -98,23 +105,16 @@ export async function getUserById(userId: string) {
   return user
 }
 
-// Update the user´s address
+// Update the user´s address (works for both authenticated users and guests)
 export async function updateUserAddress(data: ShippingAddress) {
   try {
-    const session = await auth()
-
-    const currentUser = await prisma.user.findFirst({
-      where: { id: session?.user?.id },
-    })
-
-    if (!currentUser) {
-      throw new Error("Uživatel nenalezen.")
-    }
+    const userId = await getCurrentUserId()
+    if (!userId) throw new Error("Uživatel nenalezen.")
 
     const address = shippingAddressSchema.parse(data)
 
     await prisma.user.update({
-      where: { id: currentUser.id },
+      where: { id: userId },
       data: { address },
     })
 
@@ -124,31 +124,122 @@ export async function updateUserAddress(data: ShippingAddress) {
   }
 }
 
+// Create a guest user record (no password) so a customer can check out without
+// registering. Sets an HTTP-only cookie that subsequent server actions read
+// through getCurrentUserId. If a registered user already owns the email the
+// caller is asked to log in instead.
+export async function createGuestUser({
+  email,
+  name,
+}: {
+  email: string
+  name: string
+}) {
+  try {
+    const normalizedEmail = email.trim().toLowerCase()
+    const existing = await prisma.user.findFirst({
+      where: { email: normalizedEmail },
+    })
+
+    if (existing) {
+      if (existing.role === "guest") {
+        // Re-use the existing guest record for the same email
+        await setGuestUserCookie(existing.id)
+        await attachSessionCartToUser(existing.id)
+        return { success: true, userId: existing.id, message: "" }
+      }
+      return {
+        success: false,
+        userId: null,
+        message:
+          "Tento e-mail už má účet. Přihlaste se, prosím, nebo zvolte jiný e-mail.",
+      }
+    }
+
+    const created = await prisma.user.create({
+      data: {
+        email: normalizedEmail,
+        name: name || normalizedEmail.split("@")[0],
+        role: "guest",
+      },
+    })
+
+    await setGuestUserCookie(created.id)
+    await attachSessionCartToUser(created.id)
+
+    return { success: true, userId: created.id, message: "" }
+  } catch (error) {
+    return { success: false, userId: null, message: formatError(error) }
+  }
+}
+
+async function setGuestUserCookie(userId: string) {
+  ;(await cookies()).set(GUEST_USER_COOKIE, userId, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: GUEST_COOKIE_MAX_AGE,
+    path: "/",
+  })
+}
+
+async function attachSessionCartToUser(userId: string) {
+  const sessionCartId = (await cookies()).get("sessionCartId")?.value
+  if (!sessionCartId) return
+  const cart = await prisma.cart.findFirst({ where: { sessionCartId } })
+  if (cart && !cart.userId) {
+    await prisma.cart.update({
+      where: { id: cart.id },
+      data: { userId },
+    })
+  }
+}
+
 // Update user´s payment method
 export async function updateUserPaymentMethod(
   data: z.infer<typeof paymentMethodSchema>,
 ) {
   try {
-    const session = await auth()
-
-    const currentUser = await prisma.user.findFirst({
-      where: { id: session?.user?.id },
-    })
-
-    if (!currentUser) {
-      throw new Error("Uživatel nenalezen.")
-    }
+    const userId = await getCurrentUserId()
+    if (!userId) throw new Error("Uživatel nenalezen.")
 
     const paymentMethod = paymentMethodSchema.parse(data)
 
     await prisma.user.update({
-      where: { id: currentUser.id },
+      where: { id: userId },
       data: { paymentMethod: paymentMethod.type },
     })
 
     return {
       success: true,
       message: "Platební metoda byla úspěšně aktualizována.",
+    }
+  } catch (error) {
+    return { success: false, message: formatError(error) }
+  }
+}
+
+// Update user´s payment and delivery method together
+export async function updateUserCheckoutMethods(
+  data: z.infer<typeof checkoutMethodsSchema>,
+) {
+  try {
+    const userId = await getCurrentUserId()
+    if (!userId) throw new Error("Uživatel nenalezen.")
+
+    const parsed = checkoutMethodsSchema.parse(data)
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        paymentMethod: parsed.paymentMethod,
+        deliveryMethod: parsed.deliveryMethod,
+      },
+    })
+
+    return {
+      success: true,
+      message: "Platba a doprava byly úspěšně uloženy.",
     }
   } catch (error) {
     return { success: false, message: formatError(error) }

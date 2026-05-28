@@ -17,11 +17,13 @@ const StripePayment = ({
   orderId,
   clientSecret,
   userEmail,
+  accessToken,
 }: {
   priceInCents: number
   orderId: string
   clientSecret: string
   userEmail: string
+  accessToken?: string
 }) => {
   const stripePromise = loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,
@@ -49,7 +51,7 @@ const StripePayment = ({
         .confirmPayment({
           elements,
           confirmParams: {
-            return_url: `${SERVER_URL}/moje-objednavky/${orderId}/stripe-payment-success`,
+            return_url: `${SERVER_URL}/moje-objednavky/${orderId}/stripe-payment-success${accessToken ? `?token=${accessToken}` : ""}`,
           },
         })
         .then(({ error }) => {
