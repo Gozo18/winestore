@@ -105,8 +105,9 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
                 Platba byla úspěšně přijata
               </Heading>
               <Text className="text-gray-500 text-sm mt-2 mb-0">
-                Obdrželi jsme Vaši platbu. Objednávku nyní připravujeme k
-                odeslání.
+                {order.paymentMethod === "Hotovost"
+                  ? "Obdrželi jsme Vaši platbu. Mockrát děkujeme za nákup u nás."
+                  : "Obdrželi jsme Vaši platbu. Objednávku nyní připravujeme k odeslání."}
               </Text>
             </Section>
 
@@ -189,7 +190,9 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
             {/* Footer */}
             <Section className="px-8 py-6 text-center">
               <Text className="text-xs text-gray-400 m-0">
-                O odeslání objednávky Vás budeme informovat zvláštním e-mailem.
+                {order.paymentMethod === "Hotovost"
+                  ? "Děkujeme, že jste nakoupili u nás. Těšíme se na Vaši další návštěvu."
+                  : "O odeslání objednávky Vás budeme informovat zvláštním e-mailem."}
               </Text>
               <Text className="text-xs text-gray-400 m-0 mt-1">
                 © {new Date().getFullYear()} Víno Iris. Všechna práva vyhrazena.
