@@ -81,27 +81,37 @@ const Search = ({ products }: ProductSearchProps) => {
 
             {/* Autocomplete suggestions */}
             {isOpen && suggestions.length > 0 && (
-              <div className="absolute z-50 w-[250px] lg:w-full bg-white border rounded-md shadow-lg mt-[2px] overflow-hidden">
-                {suggestions.map((product) => (
-                  <Link
-                    key={product.slug}
-                    href={`/produkt/${product.slug}`}
-                    className="flex px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
-                    onClick={() => {
-                      setQuery(product.name)
-                      setIsOpen(false)
-                    }}
-                  >
-                    <Image
-                      src={product.images[0]}
-                      alt={product.name}
-                      width={30}
-                      height={30}
-                      className="mr-2 inline-block"
-                    />
-                    {product.name}
-                  </Link>
-                ))}
+              <div className="absolute z-50 w-[250px] lg:w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-2 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+                <div className="px-3 py-2 text-[11px] uppercase tracking-wider text-gray-500 bg-gray-50 border-b border-gray-100">
+                  Návrhy
+                </div>
+                <ul className="divide-y divide-gray-100">
+                  {suggestions.map((product) => (
+                    <li key={product.slug}>
+                      <Link
+                        href={`/produkt/${product.slug}`}
+                        className="group flex items-center gap-3 px-3 py-2.5 text-sm hover:bg-gray-50 transition-colors"
+                        onClick={() => {
+                          setQuery(product.name)
+                          setIsOpen(false)
+                        }}
+                      >
+                        <div className="shrink-0 w-10 h-10 rounded-md border border-gray-200 bg-white overflow-hidden flex items-center justify-center">
+                          <Image
+                            src={product.images[0]}
+                            alt={product.name}
+                            width={40}
+                            height={40}
+                            className="object-contain w-full h-full"
+                          />
+                        </div>
+                        <span className="line-clamp-2 text-gray-800 group-hover:text-primary transition-colors">
+                          {product.name}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
