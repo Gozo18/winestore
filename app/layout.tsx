@@ -8,8 +8,11 @@ import { Cairo_Play } from "next/font/google"
 import CookieConsent from "@/components/cookie-consent"
 import GoogleAnalytics from "@/components/google-analytics"
 
+// Cairo Play se používá jen na latinkových nadpisech (názvy vín, brand text).
+// Arabský subset stahoval ~stovky kB navíc bez využití — držet jen latinku.
+// Když někdy přibude arabský obsah, vrátit "arabic" zpět.
 const cairoPlay = Cairo_Play({
-  subsets: ["latin", "arabic"],
+  subsets: ["latin"],
   variable: "--font-cairo-play",
   display: "swap",
 })

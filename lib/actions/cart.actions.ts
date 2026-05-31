@@ -10,14 +10,22 @@ import { Prisma } from "@prisma/client"
 import { getCurrentUserId } from "@/lib/current-user"
 
 // Calculate cart prices
-// Shipping is determined by the user's selected delivery method on /platebni-metody
-// and applied at checkout (see order.actions.ts and the objednavka page).
+// Pozn.:
+// - Ceny produktů v DB jsou s DPH (gross). `itemsPrice` je tedy také s DPH.
+// - `taxPrice` zde drží cenu BEZ DPH (net = gross / 1.21), nikoli částku DPH.
+//   Sloupec v DB se historicky jmenuje "taxPrice", ale význam je net.
+//   UI to zobrazuje správně jako "Cena bez DPH" (viz /objednavka).
+// - `shippingPrice` a `totalPrice` v košíku NEzahrnují dopravu ani dobírku –
+//   ty jsou známy až po výběru způsobu doručení/platby a aplikují se
+//   při vytváření objednávky v order.actions.ts a v UI na /objednavka.
 const calcPrice = (items: CartItem[]) => {
   const itemsPrice = round2(
       items.reduce((acc, item) => acc + Number(item.price) * item.qty, 0),
     ),
     shippingPrice = round2(0),
     taxPrice = round2(itemsPrice / 1.21),
+    // V košíku ještě neznáme dopravu → totalPrice = itemsPrice.
+    // Finální total se počítá v createOrder() a zobrazuje v /objednavka.
     totalPrice = round2(itemsPrice + shippingPrice)
 
   return {

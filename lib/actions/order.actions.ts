@@ -10,7 +10,8 @@ import { prisma } from "@/db/prisma"
 import { CartItem, PaymentResult, ShippingAddress } from "@/types"
 import { paypal } from "../paypal"
 import { revalidatePath } from "next/cache"
-import { PAGE_SIZE, DELIVERY_PRICES } from "../constants"
+import { PAGE_SIZE } from "../constants"
+import { calcOrderTotals } from "../pricing"
 import { Prisma } from "@prisma/client"
 import { sendOrderReceived, sendPaymentReceipt, sendPurchaseReceipt } from "@/email"
 import { getCurrentUserId } from "../current-user"
@@ -59,17 +60,11 @@ export async function createOrder() {
       }
     }
 
-    const COD_SURCHARGE = 30
-    const isPickup = user.deliveryMethod === "Osobně na prodejně"
-    const isCOD = user.paymentMethod === "Hotovost"
-    const codFee = isCOD && !isPickup ? COD_SURCHARGE : 0
-    const deliveryFee = DELIVERY_PRICES[user.deliveryMethod] ?? 0
-    const shippingPrice = (deliveryFee + codFee).toFixed(2)
-    const totalPrice = (
-      Number(cart.itemsPrice) +
-      deliveryFee +
-      codFee
-    ).toFixed(2)
+    const { shippingPrice, totalPrice } = calcOrderTotals({
+      itemsPrice: cart.itemsPrice,
+      deliveryMethod: user.deliveryMethod,
+      paymentMethod: user.paymentMethod,
+    })
 
     // Create order object
     const order = insertOrderSchema.parse({
@@ -438,7 +433,11 @@ export async function getAllOrders({
     include: { user: { select: { name: true } } },
   })
 
-  const dataCount = await prisma.order.count()
+  // Count musí respektovat stejný filtr jako findMany, jinak paginace lže
+  // při aktivním vyhledávání (totalPages počítané ze všech objednávek).
+  const dataCount = await prisma.order.count({
+    where: { ...queryFilter },
+  })
 
   return {
     data,

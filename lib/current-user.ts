@@ -3,7 +3,11 @@ import { auth } from "@/auth"
 import { prisma } from "@/db/prisma"
 
 export const GUEST_USER_COOKIE = "guestUserId"
-export const GUEST_COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 days
+// Guest cookie je v podstatě bearer token: kdo ji má, vystupuje jako daný host
+// (může změnit adresu, vytvořit objednávku atd.). Držíme krátké TTL, aby ukradená
+// nebo zapomenutá cookie z veřejného zařízení neumožnila zneužití po týdny.
+// 7 dní je kompromis: pokrývá běžné "vrátím se dokoupit", ale nepřežije dovolenou.
+export const GUEST_COOKIE_MAX_AGE = 60 * 60 * 24 * 7 // 7 days
 
 // Returns the id of the current "customer" — either an authenticated user
 // (via NextAuth session) or a guest tracked through the guestUserId cookie.

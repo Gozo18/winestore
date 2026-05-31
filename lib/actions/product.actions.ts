@@ -18,9 +18,13 @@ export async function getLatestProducts() {
 
 // Get single product by slug
 export async function getProductBySlug(slug: string) {
-  return await prisma.product.findFirst({
+  const data = await prisma.product.findFirst({
     where: { slug: slug },
   })
+  // Konzistentní serializace s ostatními gettery — Prisma Decimal by jinak
+  // putoval do RSC payloadu jako objekt s .toString() a klient by ho zpracoval
+  // nesprávně (např. `Number(product.price)` na nepřevedených datech).
+  return convertToPlainObject(data)
 }
 
 // Get single product by it's ID
@@ -98,34 +102,42 @@ export async function getAllProducts({
         }
       : {}
 
-  const data = await prisma.product.findMany({
-    where: {
-      ...queryFilter,
-      ...categoryFilter,
-      ...priceFilter,
-      ...ratingFilter,
-      ...sugarFilter,
-    },
-    orderBy:
-      sort === "lowest"
-        ? { price: "asc" }
-        : sort === "highest"
-          ? { price: "desc" }
-          : sort === "rating"
-            ? { rating: "desc" }
-            : sort === "sugar-low"
-              ? { sugar: "asc" }
-              : sort === "sugar-high"
-                ? { sugar: "desc" }
-                : { createdAt: "desc" },
-    skip: (page - 1) * limit,
-    take: limit,
-  })
+  const where: Prisma.ProductWhereInput = {
+    ...queryFilter,
+    ...categoryFilter,
+    ...priceFilter,
+    ...ratingFilter,
+    ...sugarFilter,
+  }
 
-  const dataCount = await prisma.product.count()
+  // Paralelizujeme findMany + count — jsou nezávislé, ale pro stejný where.
+  // Count MUSÍ respektovat filtr, jinak paginace lže při aktivním vyhledávání
+  // (stejný bug jako u admin getterů v sekci 3g).
+  const [data, dataCount] = await Promise.all([
+    prisma.product.findMany({
+      where,
+      orderBy:
+        sort === "lowest"
+          ? { price: "asc" }
+          : sort === "highest"
+            ? { price: "desc" }
+            : sort === "rating"
+              ? { rating: "desc" }
+              : sort === "sugar-low"
+                ? { sugar: "asc" }
+                : sort === "sugar-high"
+                  ? { sugar: "desc" }
+                  : { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.product.count({ where }),
+  ])
 
   return {
-    data,
+    // Decimal `price`/`rating` musí přes serializaci, jinak v RSC payloadu
+    // letí jako objekty a klient na nich nemůže dělat Number(product.price).
+    data: convertToPlainObject(data),
     totalPages: Math.ceil(dataCount / limit),
   }
 }

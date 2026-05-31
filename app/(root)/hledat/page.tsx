@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { getAllProducts, getAllCategories } from "@/lib/actions/product.actions"
+import { getMyCart } from "@/lib/actions/cart.actions"
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu"
 import { ChevronDownIcon } from "lucide-react"
 import Link from "next/link"
@@ -122,16 +123,20 @@ const SearchPage = async (props: {
     return `/hledat?${new URLSearchParams(params).toString()}`
   }
 
-  const products = await getAllProducts({
-    query: q,
-    category,
-    price,
-    rating,
-    sort,
-    page: Number(page),
-  })
-
-  const categories = await getAllCategories()
+  // Tři nezávislé DB čtení paralelně, ať se nečekají v řadě.
+  // Cart se načítá jednou pro celý list (viz ProductCard refactor).
+  const [products, categories, cart] = await Promise.all([
+    getAllProducts({
+      query: q,
+      category,
+      price,
+      rating,
+      sort,
+      page: Number(page),
+    }),
+    getAllCategories(),
+    getMyCart(),
+  ])
 
   return (
     <div className="grid lg:grid-cols-5 lg:gap-5">
@@ -302,7 +307,7 @@ const SearchPage = async (props: {
         <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-3">
           {products.data.length === 0 && <div>Žádný produkt nenalezen.</div>}
           {products.data.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} cart={cart} product={product} />
           ))}
         </div>
         {products.totalPages > 1 && (

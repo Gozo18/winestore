@@ -306,7 +306,11 @@ export async function getAllUsers({
     skip: (page - 1) * limit,
   })
 
-  const dataCount = await prisma.user.count()
+  // Count musí respektovat stejný filtr jako findMany — jinak při aktivním
+  // vyhledávání paginace ukazuje stránky, které neexistují.
+  const dataCount = await prisma.user.count({
+    where: { ...queryFilter },
+  })
 
   return {
     data,

@@ -27,7 +27,7 @@ export function formatError(error: any) {
     )
 
     return fieldErrors.join(" ")
-  } else if ((error.name = "PrismaClientKnownRequestError")) {
+  } else if (error.name === "PrismaClientKnownRequestError") {
     // Handle prisma errors
     const field = error.meta?.target ? error.meta.target[0] : "Field"
     return `${field.charAt(0).toUpperCase() + field.slice(1)} už existuje.`

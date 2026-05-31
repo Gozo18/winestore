@@ -1,15 +1,15 @@
 import Link from "next/link"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import ProductPrice from "./product-price"
-import { Product } from "@/types"
+import { Cart, Product } from "@/types"
 import AddToCart from "../product/add-to-cart"
-import { getMyCart } from "@/lib/actions/cart.actions"
 import Rating from "./rating"
 import ProductCardImage from "./product-card-image"
 
-const ProductCard = async ({ product }: { product: Product }) => {
-  const cart = await getMyCart()
-
+// Pozn.: Karta NEsmí volat getMyCart() interně. Když se v listu vyrenderuje
+// 12 karet, dělalo to 12× DB query + 12× cookie read. Cart si vyzvedne
+// rodičovský list (ProductList) jednou a předá ho přes props.
+const ProductCard = ({ cart, product }: { cart?: Cart; product: Product }) => {
   return (
     <Card className="w-full">
       <CardHeader className="p-0 items-center">

@@ -5,7 +5,8 @@ import { Metadata } from "next"
 import { redirect } from "next/navigation"
 import CheckoutSteps from "@/components/shared/checkout-steps"
 import { Card, CardContent } from "@/components/ui/card"
-import { DELIVERY_PRICES } from "@/lib/constants"
+import { COD_SURCHARGE } from "@/lib/constants"
+import { calcOrderTotals } from "@/lib/pricing"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
@@ -38,17 +39,15 @@ const PlaceOrderPage = async () => {
 
   const userAddress = user.address as ShippingAddress
 
-  const COD_SURCHARGE = 30
-  const isPickup = user.deliveryMethod === "Osobně na prodejně"
-  const isCOD = user.paymentMethod === "Hotovost"
-  const codFee = isCOD && !isPickup ? COD_SURCHARGE : 0
-  const deliveryFee = DELIVERY_PRICES[user.deliveryMethod] ?? 0
-  const displayShippingPrice = (deliveryFee + codFee).toFixed(2)
-  const displayTotalPrice = (
-    Number(cart.itemsPrice) +
-    deliveryFee +
-    codFee
-  ).toFixed(2)
+  const {
+    codFee,
+    shippingPrice: displayShippingPrice,
+    totalPrice: displayTotalPrice,
+  } = calcOrderTotals({
+    itemsPrice: cart.itemsPrice,
+    deliveryMethod: user.deliveryMethod,
+    paymentMethod: user.paymentMethod,
+  })
 
   return (
     <>
@@ -112,7 +111,7 @@ const PlaceOrderPage = async () => {
                     <TableRow key={item.slug}>
                       <TableCell>
                         <Link
-                          href={`/produkt/{item.slug}`}
+                          href={`/produkt/${item.slug}`}
                           className="flex items-center"
                         >
                           <Image
@@ -153,7 +152,7 @@ const PlaceOrderPage = async () => {
                   Doprava &nbsp;
                   {codFee > 0 && (
                     <span className="text-black/50 text-sm">
-                      (včetně dobírky 30 Kč)
+                      (včetně dobírky {COD_SURCHARGE} Kč)
                     </span>
                   )}
                 </div>

@@ -47,6 +47,10 @@ export const DELIVERY_PRICES: Record<string, number> = {
   Messenger: 200,
 }
 
+// Příplatek za dobírku (Hotovost) — neaplikuje se při osobním odběru.
+// Musí být jediný zdroj pravdy, aby cena v UI a serverové validaci nedriftovala.
+export const COD_SURCHARGE = 30
+
 export const PAGE_SIZE = Number(process.env.PAGE_SIZE) || 12
 
 export const productDefaultValues = {
