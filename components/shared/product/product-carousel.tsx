@@ -52,20 +52,18 @@ const ProductCarousel = ({ data }: { data: Product[] }) => {
           {data.map((product: Product, index: number) => (
             <CarouselItem key={index}>
               <Link href={`/produkt/${product.slug}`}>
-                <div className="relative mx-auto">
+                <div className="relative mx-auto w-full aspect-[1240/500] bg-muted animate-pulse overflow-hidden">
                   <Image
                     src={product.banner!}
                     alt={product.name}
-                    height="0"
-                    width="0"
-                    sizes="100vw"
-                    className="w-full h-auto"
+                    fill
+                    sizes="(max-width: 1240px) 100vw, 1240px"
+                    priority={index === 0}
+                    className="object-cover"
+                    onLoadingComplete={(img) => {
+                      img.parentElement?.classList.remove("animate-pulse", "bg-muted")
+                    }}
                   />
-                  {/* <div className="absolute inset-0 flex items-end justify-center">
-                  <h2 className="bg-gray-900 bg-opacity-50 text-sm lg:text-2xl font-bold px-2 text-white">
-                    {product.name}
-                  </h2>
-                </div> */}
                 </div>
               </Link>
             </CarouselItem>

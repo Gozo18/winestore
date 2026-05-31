@@ -65,8 +65,8 @@ const DealCountdown = () => {
     return (
       <section className="grid grid-cols-1 md:grid-cols-2 my-20">
         <div className="flex flex-col gap-2 justify-center">
-          <h3 className="text-3xl font-bold">Nabídka skončila</h3>
-          <p>
+          <h3 className="text-3xl font-bold text-center">Nabídka skončila</h3>
+          <p className="text-center">
             Tato nabídka již není dostupná. Podívejte se na naše nejnovější
             akce!
           </p>

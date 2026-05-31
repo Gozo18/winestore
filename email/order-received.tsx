@@ -83,18 +83,18 @@ export default function OrderReceivedEmail({ order }: OrderReceivedProps) {
         <Body className="font-sans bg-gray-50">
           <Container className="max-w-xl mx-auto">
             {/* Header */}
-            <Section className="bg-rose-800 rounded-t-lg px-8 py-6 text-center">
+            <Section className="bg-gray-200 rounded-t-lg px-8 py-6 text-center">
               <Img
                 src={`${process.env.NEXT_PUBLIC_SERVER_URL}/images/logo_only.png`}
                 alt="Víno Iris"
                 width="60"
                 className="mx-auto mb-3"
               />
-              <Text className="text-white text-2xl font-bold m-0 tracking-wide">
+              <Text className="text-2xl font-bold m-0 tracking-wide">
                 Víno Iris
               </Text>
-              <Text className="text-rose-200 text-sm m-0 mt-1">
-                Váš oblíbený vinný obchod
+              <Text className="text-sm m-0 mt-1">
+                Vaše oblíbené vinařství z Pavlova
               </Text>
             </Section>
 
