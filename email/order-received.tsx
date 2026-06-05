@@ -234,6 +234,18 @@ export default function OrderReceivedEmail({ order }: OrderReceivedProps) {
               <Text className="m-0 text-sm text-gray-600">
                 {order.shippingAddress.postalCode} {order.shippingAddress.city}
               </Text>
+              {(order.user?.email || order.guestEmail) && (
+                <Text className="m-0 mt-2 text-sm text-gray-600">
+                  <span className="text-gray-400">E-mail: </span>
+                  {order.user?.email || order.guestEmail}
+                </Text>
+              )}
+              {order.shippingAddress.phone && (
+                <Text className="m-0 text-sm text-gray-600">
+                  <span className="text-gray-400">Telefon: </span>
+                  {order.shippingAddress.phone}
+                </Text>
+              )}
             </Section>
 
             {/* CTA */}

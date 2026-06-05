@@ -173,7 +173,7 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
             </Section>
 
             {/* Price summary */}
-            <Section className="bg-white px-8 py-4 rounded-b-lg">
+            <Section className="bg-white px-8 py-4 border-b border-gray-100">
               {[
                 { name: "Položky celkem", price: order.itemsPrice },
                 { name: "DPH", price: order.taxPrice },
@@ -202,6 +202,25 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
                   </Text>
                 </Column>
               </Row>
+            </Section>
+
+            {/* Contact */}
+            <Section className="bg-white px-8 py-4 rounded-b-lg">
+              <Text className="text-xs text-gray-400 uppercase tracking-wide mb-2 m-0">
+                Kontakt
+              </Text>
+              {(order.user?.email || order.guestEmail) && (
+                <Text className="m-0 text-sm text-gray-600">
+                  <span className="text-gray-400">E-mail: </span>
+                  {order.user?.email || order.guestEmail}
+                </Text>
+              )}
+              {order.shippingAddress.phone && (
+                <Text className="m-0 text-sm text-gray-600">
+                  <span className="text-gray-400">Telefon: </span>
+                  {order.shippingAddress.phone}
+                </Text>
+              )}
             </Section>
 
             {/* Footer */}

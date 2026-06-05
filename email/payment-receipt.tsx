@@ -167,7 +167,7 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
             </Section>
 
             {/* Items summary */}
-            <Section className="bg-white px-8 py-4 rounded-b-lg">
+            <Section className="bg-white px-8 py-4 border-b border-gray-100">
               <Text className="text-xs text-gray-400 uppercase tracking-wide mb-3 m-0">
                 Přehled položek
               </Text>
@@ -185,6 +185,25 @@ export default function PaymentReceiptEmail({ order }: PaymentReceiptProps) {
                   </Column>
                 </Row>
               ))}
+            </Section>
+
+            {/* Contact */}
+            <Section className="bg-white px-8 py-4 rounded-b-lg">
+              <Text className="text-xs text-gray-400 uppercase tracking-wide mb-2 m-0">
+                Kontakt
+              </Text>
+              {(order.user?.email || order.guestEmail) && (
+                <Text className="m-0 text-sm text-gray-600">
+                  <span className="text-gray-400">E-mail: </span>
+                  {order.user?.email || order.guestEmail}
+                </Text>
+              )}
+              {order.shippingAddress.phone && (
+                <Text className="m-0 text-sm text-gray-600">
+                  <span className="text-gray-400">Telefon: </span>
+                  {order.shippingAddress.phone}
+                </Text>
+              )}
             </Section>
 
             {/* Footer */}

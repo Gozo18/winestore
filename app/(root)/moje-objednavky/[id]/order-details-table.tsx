@@ -60,7 +60,11 @@ const OrderDetailsTable = ({
     paidAt,
     deliveredAt,
     createdAt,
+    user,
+    guestEmail,
   } = order
+
+  const contactEmail = user?.email || guestEmail || ""
 
   const { toast } = useToast()
 
@@ -186,6 +190,18 @@ const OrderDetailsTable = ({
                 {shippingAddress.streetAddress}, {shippingAddress.city}{" "}
                 {shippingAddress.postalCode}, {shippingAddress.country}
               </p>
+              {contactEmail && (
+                <p className="mb-1 text-sm md:text-base">
+                  <span className="text-muted-foreground">E-mail: </span>
+                  {contactEmail}
+                </p>
+              )}
+              {shippingAddress.phone && (
+                <p className="mb-2 text-sm md:text-base">
+                  <span className="text-muted-foreground">Telefon: </span>
+                  {shippingAddress.phone}
+                </p>
+              )}
               {deliveryMethod && (
                 <p className="mb-2 text-sm md:text-base">
                   <span className="text-muted-foreground">Doprava: </span>
