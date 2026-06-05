@@ -49,6 +49,23 @@ export const signUpFormSchema = z
     path: ["confirmPassword"],
   })
 
+// Schema for requesting a password reset
+export const forgotPasswordSchema = z.object({
+  email: z.string().email("Musí být e-mailová adresa."),
+})
+
+// Schema for setting a new password via reset link
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1, "Token je vyžadován."),
+    password: z.string().min(6, "Heslo musí mít více než 6 znaků."),
+    confirmPassword: z.string().min(6, "Heslo musí mít více než 6 znaků."),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Hesla se neshodují.",
+    path: ["confirmPassword"],
+  })
+
 // Cart schema
 export const cartItemSchema = z.object({
   productId: z.string().min(1, "Produkt je vyžadován."),

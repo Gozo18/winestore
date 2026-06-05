@@ -8,6 +8,7 @@ import { useActionState } from "react"
 import { useFormStatus } from "react-dom"
 import { signInWithCredentials } from "@/lib/actions/user.actions"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 
 const CredentialsSignInForm = () => {
   const [data, action] = useActionState(signInWithCredentials, {
@@ -53,6 +54,14 @@ const CredentialsSignInForm = () => {
             autoComplete="password"
             defaultValue={signInDefaultValues.password}
           />
+          <div className="mt-2 text-right text-sm">
+            <Link
+              href="/zapomenute-heslo"
+              className="underline text-muted-foreground hover:text-foreground"
+            >
+              Zapomenuté heslo?
+            </Link>
+          </div>
         </div>
         <div>
           <SignInButton />

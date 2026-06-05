@@ -9,25 +9,19 @@ import { APP_NAME } from "@/lib/constants"
 import { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
+import ForgotPasswordForm from "./forgot-password-form"
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
-import SignUpForm from "./sign-up-form"
 
 export const metadata: Metadata = {
-  title: "Registrace",
+  title: "Zapomenuté heslo",
 }
 
-const SignUpPage = async (props: {
-  searchParams: Promise<{
-    callbackUrl: string
-  }>
-}) => {
-  const { callbackUrl } = await props.searchParams
-
+const ForgotPasswordPage = async () => {
   const session = await auth()
 
   if (session) {
-    redirect(callbackUrl || "/")
+    redirect("/")
   }
 
   return (
@@ -43,17 +37,28 @@ const SignUpPage = async (props: {
               priority={true}
             />
           </Link>
-          <CardTitle className="text-center">Registrace</CardTitle>
+          <CardTitle className="text-center">Zapomenuté heslo</CardTitle>
           <CardDescription className="text-center">
-            Zaregistrujte váš účet.
+            Zadejte e-mail spojený s Vaším účtem a my Vám pošleme odkaz pro
+            nastavení nového hesla.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SignUpForm />
+          <ForgotPasswordForm />
+          <div className="mt-6 pt-4 text-center text-sm text-muted-foreground">
+            <p>
+              <Link
+                href="/prihlaseni"
+                className="underline text-foreground"
+              >
+                Zpět na přihlášení
+              </Link>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
   )
 }
 
-export default SignUpPage
+export default ForgotPasswordPage

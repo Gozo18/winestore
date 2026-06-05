@@ -7,6 +7,8 @@ import {
   paymentMethodSchema,
   checkoutMethodsSchema,
   updateUserSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 } from "../validators"
 import { auth, signIn, signOut } from "@/auth"
 import { isRedirectError } from "next/dist/client/components/redirect-error"
@@ -25,6 +27,8 @@ import {
   GUEST_COOKIE_MAX_AGE,
   getCurrentUserId,
 } from "../current-user"
+import { sendWelcomeEmail, sendPasswordResetEmail } from "@/email"
+import crypto from "crypto"
 
 // Sign in user with credentials
 export async function signInWithCredentials(
@@ -82,6 +86,12 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
       },
     })
 
+    try {
+      await sendWelcomeEmail({ name: user.name, email: user.email })
+    } catch (emailError) {
+      console.error("Nepodařilo se odeslat uvítací e-mail:", emailError)
+    }
+
     await signIn("credentials", { email: user.email, password: plainPassword })
 
     return { success: true, message: "Registrace proběhla úspěšně." }
@@ -90,6 +100,127 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
       throw error
     }
 
+    return { success: false, message: formatError(error) }
+  }
+}
+
+const PASSWORD_RESET_PREFIX = "reset:"
+const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000 // 1 hour
+
+const hashResetToken = (token: string) =>
+  crypto.createHash("sha256").update(token).digest("hex")
+
+// Request a password reset link
+export async function requestPasswordReset(
+  prevState: unknown,
+  formData: FormData
+) {
+  // Always respond with the same message to prevent account enumeration
+  const genericMessage =
+    "Pokud k zadanému e-mailu existuje účet, odeslali jsme na něj odkaz pro obnovu hesla."
+
+  try {
+    const { email } = forgotPasswordSchema.parse({
+      email: formData.get("email"),
+    })
+
+    const user = await prisma.user.findFirst({ where: { email } })
+
+    if (user) {
+      const identifier = `${PASSWORD_RESET_PREFIX}${email}`
+
+      // Invalidate any previous reset tokens for this user
+      await prisma.verificationToken.deleteMany({ where: { identifier } })
+
+      const rawToken = crypto.randomBytes(32).toString("hex")
+      const tokenHash = hashResetToken(rawToken)
+      const expires = new Date(Date.now() + PASSWORD_RESET_TTL_MS)
+
+      await prisma.verificationToken.create({
+        data: { identifier, token: tokenHash, expires },
+      })
+
+      const resetUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/obnova-hesla?token=${rawToken}`
+
+      try {
+        await sendPasswordResetEmail({
+          name: user.name,
+          email: user.email,
+          resetUrl,
+        })
+      } catch (emailError) {
+        console.error(
+          "Nepodařilo se odeslat e-mail pro obnovu hesla:",
+          emailError
+        )
+      }
+    }
+
+    return { success: true, message: genericMessage }
+  } catch (error) {
+    if (isRedirectError(error)) throw error
+    return { success: false, message: formatError(error) }
+  }
+}
+
+// Set a new password using a reset token
+export async function resetPassword(prevState: unknown, formData: FormData) {
+  try {
+    const { token, password } = resetPasswordSchema.parse({
+      token: formData.get("token"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+    })
+
+    const tokenHash = hashResetToken(token)
+
+    const record = await prisma.verificationToken.findFirst({
+      where: {
+        token: tokenHash,
+        identifier: { startsWith: PASSWORD_RESET_PREFIX },
+      },
+    })
+
+    if (!record || record.expires < new Date()) {
+      if (record) {
+        await prisma.verificationToken.deleteMany({
+          where: { identifier: record.identifier, token: record.token },
+        })
+      }
+      return {
+        success: false,
+        message: "Odkaz pro obnovu hesla je neplatný nebo vypršel.",
+      }
+    }
+
+    const email = record.identifier.slice(PASSWORD_RESET_PREFIX.length)
+    const user = await prisma.user.findFirst({ where: { email } })
+
+    if (!user) {
+      await prisma.verificationToken.deleteMany({
+        where: { identifier: record.identifier },
+      })
+      return {
+        success: false,
+        message: "Odkaz pro obnovu hesla je neplatný nebo vypršel.",
+      }
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashSync(password, 10) },
+    })
+
+    await prisma.verificationToken.deleteMany({
+      where: { identifier: record.identifier },
+    })
+
+    return {
+      success: true,
+      message: "Heslo bylo úspěšně změněno. Nyní se můžete přihlásit.",
+    }
+  } catch (error) {
+    if (isRedirectError(error)) throw error
     return { success: false, message: formatError(error) }
   }
 }
