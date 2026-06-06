@@ -18,12 +18,12 @@ export default function AgeVerificationModal() {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    const verified = sessionStorage.getItem(STORAGE_KEY)
+    const verified = localStorage.getItem(STORAGE_KEY)
     if (!verified) setOpen(true)
   }, [])
 
   const handleConfirm = () => {
-    sessionStorage.setItem(STORAGE_KEY, "true")
+    localStorage.setItem(STORAGE_KEY, "true")
     setOpen(false)
   }
 

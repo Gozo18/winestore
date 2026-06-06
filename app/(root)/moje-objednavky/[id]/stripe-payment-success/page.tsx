@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { getOrderById } from "@/lib/actions/order.actions"
+import { getOrderById, updateOrderToPaid } from "@/lib/actions/order.actions"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import Stripe from "stripe"
@@ -34,6 +34,31 @@ const SuccessPage = async (props: {
   const tokenSuffix = token ? `?token=${token}` : ""
 
   if (!isSuccess) return redirect(`/moje-objednavky/${id}${tokenSuffix}`)
+
+  // Mark order as paid here to avoid a race with the Stripe webhook —
+  // user often opens "Náhled objednávky" before charge.succeeded arrives.
+  if (!order.isPaid) {
+    try {
+      const charge = paymentIntent.latest_charge
+        ? await stripe.charges.retrieve(paymentIntent.latest_charge as string)
+        : null
+      await updateOrderToPaid({
+        orderId: order.id,
+        paymentResult: {
+          id: charge?.id ?? paymentIntent.id,
+          status: "COMPLETED",
+          email_address:
+            charge?.billing_details?.email ??
+            paymentIntent.receipt_email ??
+            "",
+          pricePaid: (paymentIntent.amount / 100).toFixed(),
+        },
+      })
+    } catch (err) {
+      // Webhook may have won the race — that's fine, it's idempotent.
+      console.error("[stripe-success] updateOrderToPaid failed:", err)
+    }
+  }
 
   return (
     <div className="max-w-4xl w-full mx-auto space-y-8">

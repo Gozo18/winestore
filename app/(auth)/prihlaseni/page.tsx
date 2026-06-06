@@ -52,19 +52,13 @@ const SignInPage = async (props: {
           <CredentialsSignInForm />
           <div className="mt-6 pt-4 text-center text-sm text-muted-foreground">
             <p className="mb-2">Nemáte u nás účet?</p>
-            <p className="mb-2">
+            <p>
               <Link
                 href="/registrace"
                 target="_self"
                 className="underline text-foreground"
               >
                 Zaregistrujte se.
-              </Link>
-            </p>
-            <p className="mb-2">nebo</p>
-            <p>
-              <Link href="/dodaci-adresa" className="underline text-foreground">
-                Pokračujte k objednávce bez registrace
               </Link>
             </p>
           </div>
