@@ -38,7 +38,7 @@ export const PAYMENT_METHODS = process.env.PAYMENT_METHODS
   ? process.env.PAYMENT_METHODS.split(", ")
   : ["Převod", "Stripe", "Hotovost"]
 export const DEFAULT_PAYMENT_METHOD =
-  process.env.DEFAULT_PAYMENT_METHOD || "Stripe"
+  process.env.DEFAULT_PAYMENT_METHOD || "Převod"
 
 export const DELIVERY_METHODS = ["Osobně na prodejně", "Messenger"] as const
 export const DEFAULT_DELIVERY_METHOD = "Osobně na prodejně"

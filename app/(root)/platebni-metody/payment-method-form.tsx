@@ -90,7 +90,10 @@ const PaymentMethodForm = ({
   const form = useForm<z.infer<typeof checkoutMethodsSchema>>({
     resolver: zodResolver(checkoutMethodsSchema),
     defaultValues: {
-      paymentMethod: preferredPaymentMethod || DEFAULT_PAYMENT_METHOD,
+      paymentMethod:
+        preferredPaymentMethod && preferredPaymentMethod !== "Stripe"
+          ? preferredPaymentMethod
+          : DEFAULT_PAYMENT_METHOD,
       deliveryMethod: preferredDeliveryMethod || DEFAULT_DELIVERY_METHOD,
     },
   })
