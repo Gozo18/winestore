@@ -214,7 +214,7 @@ const PaymentMethodForm = ({
                     <RadioGroup
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      className="flex flex-col gap-3 [&>:nth-child(-n+2)]:hidden"
+                      className="flex flex-col gap-3 [&>:nth-child(2)]:hidden"
                     >
                       {PAYMENT_METHODS.map((paymentMethod) => {
                         const baseMeta = PAYMENT_METHOD_META[paymentMethod]
