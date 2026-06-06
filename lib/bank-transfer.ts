@@ -2,10 +2,10 @@
 // Sdíleno mezi e-mailem (potvrzení objednávky) a detailem objednávky,
 // aby případná změna (číslo účtu, formát QR) byla na jednom místě.
 
-export const BANK_ACCOUNT_NUMBER = "100654984"
-export const BANK_CODE = "0300"
+export const BANK_ACCOUNT_NUMBER = "9440651"
+export const BANK_CODE = "0100"
 export const BANK_ACCOUNT = `${BANK_ACCOUNT_NUMBER}/${BANK_CODE}`
-export const PAYMENT_MESSAGE = "Vinarstvi Celnar"
+export const PAYMENT_MESSAGE = "Vino Iris"
 
 /** Posledních 6 znaků id objednávky se používá jako variabilní symbol. */
 export function getVariableSymbol(orderId: string): string {
