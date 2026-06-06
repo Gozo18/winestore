@@ -26,7 +26,7 @@ import {
   ArrowRight,
   Loader,
   CreditCard,
-  Banknote,
+  Landmark,
   HandCoins,
   Store,
   Bike,
@@ -47,11 +47,11 @@ const PAYMENT_METHOD_META: Record<
     fee: "zdarma",
     description: "Visa, Mastercard",
   },
-  PayPal: {
-    icon: <Banknote className="w-6 h-6" />,
-    label: "PayPal",
+  Převod: {
+    icon: <Landmark className="w-6 h-6" />,
+    label: "Platba převodem",
     fee: "zdarma",
-    description: "Platba přes váš PayPal účet",
+    description: "Platba bankovním převodem",
   },
   Hotovost: {
     icon: <HandCoins className="w-6 h-6" />,

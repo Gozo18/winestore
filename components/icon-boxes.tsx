@@ -15,7 +15,7 @@ const boxes = [
   {
     icon: CreditCard,
     title: "Flexibilní platba",
-    description: "Formu platby dohodneme individuálně po objednání",
+    description: "Platba kartou, převodem nebo dobírkou",
   },
   {
     icon: Phone,

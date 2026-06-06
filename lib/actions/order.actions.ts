@@ -8,7 +8,6 @@ import { getUserById } from "./user.actions"
 import { insertOrderSchema } from "../validators"
 import { prisma } from "@/db/prisma"
 import { CartItem, PaymentResult, ShippingAddress } from "@/types"
-import { paypal } from "../paypal"
 import { revalidatePath } from "next/cache"
 import { PAGE_SIZE } from "../constants"
 import { calcOrderTotals } from "../pricing"
@@ -144,7 +143,7 @@ export async function createOrder() {
     const tokenSuffix = isGuest ? `?token=${accessToken}` : ""
     let redirectLink = ""
 
-    if (user.paymentMethod === "Stripe" || user.paymentMethod === "Paypal") {
+    if (user.paymentMethod === "Stripe") {
       redirectLink = `/moje-objednavky/${insertedOrderId}${tokenSuffix}#payment-section`
     } else {
       redirectLink = `/moje-objednavky/${insertedOrderId}${tokenSuffix}`
@@ -174,94 +173,6 @@ export async function getOrderById(orderId: string) {
   })
 
   return convertToPlainObject(data)
-}
-
-// Create new paypal order
-export async function createPayPalOrder(orderId: string) {
-  try {
-    // Get order from database
-    const order = await prisma.order.findFirst({
-      where: {
-        id: orderId,
-      },
-    })
-
-    if (order) {
-      // Create paypal order
-      const paypalOrder = await paypal.createOrder(Number(order.totalPrice))
-
-      // Update order with paypal order id
-      await prisma.order.update({
-        where: { id: orderId },
-        data: {
-          paymentResult: {
-            id: paypalOrder.id,
-            email_address: "",
-            status: "",
-            pricePaid: 0,
-          },
-        },
-      })
-
-      return {
-        success: true,
-        message: "Objednávka vytvořena.",
-        data: paypalOrder.id,
-      }
-    } else {
-      throw new Error("Objednávka nenalezena.")
-    }
-  } catch (error) {
-    return { success: false, message: formatError(error) }
-  }
-}
-
-// Approve paypal order and update order to paid
-export async function approvePayPalOrder(
-  orderId: string,
-  data: { orderID: string },
-) {
-  try {
-    // Get order from database
-    const order = await prisma.order.findFirst({
-      where: {
-        id: orderId,
-      },
-    })
-
-    if (!order) throw new Error("Objednávka nenalezena.")
-
-    const captureData = await paypal.capturePayment(data.orderID)
-
-    if (
-      !captureData ||
-      captureData.id !== (order.paymentResult as PaymentResult)?.id ||
-      captureData.status !== "COMPLETED"
-    ) {
-      throw new Error("Chyba při zpracování PayPal platby.")
-    }
-
-    // Update order to paid
-    await updateOrderToPaid({
-      orderId,
-      paymentResult: {
-        id: captureData.id,
-        status: captureData.status,
-        email_address: captureData.payer.email_address,
-        pricePaid:
-          captureData.purchase_units[0]?.payments?.captures[0]?.amount?.value,
-      },
-    })
-
-    revalidatePath(`/order/${orderId}`)
-
-    return {
-      success: true,
-      message: "Vaše platba byla úspěšná.",
-    }
-  } catch (error) {
-    return { success: false, message: formatError(error) }
-  }
 }
 
 // Update order to paid

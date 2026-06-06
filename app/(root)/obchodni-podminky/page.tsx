@@ -67,7 +67,7 @@ const ObchodniPodminkyPage = () => {
         <p>Kupní cenu lze uhradit následujícími způsoby:</p>
         <ul className="list-disc list-inside space-y-1 pl-2">
           <li>Online platební kartou přes platební bránu Stripe</li>
-          <li>Přes službu PayPal</li>
+          <li>Bankovním převodem</li>
           <li>Dobírkou při převzetí zásilky (příplatek 30 Kč)</li>
         </ul>
         <p>

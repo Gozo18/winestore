@@ -14,6 +14,11 @@ import {
 } from "@react-email/components"
 import { Order } from "@/types"
 import { formatCurrency } from "@/lib/utils"
+import {
+  BANK_ACCOUNT,
+  getQrPaymentUrl,
+  getVariableSymbol,
+} from "@/lib/bank-transfer"
 import sampleData from "@/db/sample-data"
 import dotenv from "dotenv"
 dotenv.config()
@@ -74,6 +79,14 @@ type OrderReceivedProps = {
 
 export default function OrderReceivedEmail({ order }: OrderReceivedProps) {
   const isCOD = order.paymentMethod === "Hotovost"
+  const isBankTransfer = order.paymentMethod === "Převod"
+  const variableSymbol = getVariableSymbol(order.id)
+  const qrPaymentUrl = isBankTransfer
+    ? getQrPaymentUrl({
+        amount: order.totalPrice,
+        variableSymbol,
+      })
+    : ""
 
   return (
     <Html>
@@ -106,9 +119,65 @@ export default function OrderReceivedEmail({ order }: OrderReceivedProps) {
               <Text className="text-gray-500 text-sm mt-2 mb-0">
                 {isCOD
                   ? "Objednávku připravujeme. Platbu uhradíte při převzetí zásilky."
-                  : "Objednávka čeká na zaplacení. Po přijetí platby ji začneme připravovat."}
+                  : isBankTransfer
+                    ? "Objednávka čeká na zaplacení převodem. Po přijetí platby ji začneme připravovat."
+                    : "Objednávka čeká na zaplacení. Po přijetí platby ji začneme připravovat."}
               </Text>
             </Section>
+
+            {/* Bank transfer instructions */}
+            {isBankTransfer && (
+              <Section className="bg-amber-50 px-8 py-5 border-b border-gray-100">
+                <Text className="text-xs text-gray-500 uppercase tracking-wide mb-3 m-0">
+                  Platební instrukce
+                </Text>
+                <Text className="m-0 text-sm text-gray-700">
+                  Prosíme o úhradu objednávky bankovním převodem na náš účet.
+                  Po připsání platby Vaši objednávku začneme připravovat.
+                </Text>
+                <Row className="mt-3">
+                  <Column>
+                    <Text className="mb-0 text-xs text-gray-400 uppercase tracking-wide">
+                      Číslo účtu
+                    </Text>
+                    <Text className="mt-1 text-sm text-gray-800 font-semibold">
+                      {BANK_ACCOUNT}
+                    </Text>
+                  </Column>
+                  <Column>
+                    <Text className="mb-0 text-xs text-gray-400 uppercase tracking-wide">
+                      Variabilní symbol
+                    </Text>
+                    <Text className="mt-1 text-sm text-gray-800 font-semibold">
+                      {variableSymbol}
+                    </Text>
+                  </Column>
+                  <Column>
+                    <Text className="mb-0 text-xs text-gray-400 uppercase tracking-wide">
+                      Částka
+                    </Text>
+                    <Text className="mt-1 text-sm text-gray-800 font-semibold">
+                      {formatCurrency(order.totalPrice)}
+                    </Text>
+                  </Column>
+                </Row>
+                <Row className="mt-4">
+                  <Column align="center">
+                    <Img
+                      src={qrPaymentUrl}
+                      alt="QR platba"
+                      width="220"
+                      height="220"
+                      className="mx-auto rounded-md bg-white p-2"
+                    />
+                    <Text className="text-xs text-gray-500 m-0 mt-2">
+                      Naskenujte QR kód v mobilním bankovnictví pro rychlou
+                      platbu.
+                    </Text>
+                  </Column>
+                </Row>
+              </Section>
+            )}
 
             {/* Order meta */}
             <Section className="bg-white px-8 py-5 border-b border-gray-100">

@@ -17,29 +17,25 @@ import Image from "next/image"
 import { useToast } from "@/hooks/use-toast"
 import { useTransition } from "react"
 import {
-  PayPalButtons,
-  PayPalScriptProvider,
-  usePayPalScriptReducer,
-} from "@paypal/react-paypal-js"
-import {
-  createPayPalOrder,
-  approvePayPalOrder,
   updateOrderToPaidCOD,
   deliverOrder,
 } from "@/lib/actions/order.actions"
 import StripePayment from "./stripe-payment"
 import { Separator } from "@/components/ui/separator"
+import {
+  BANK_ACCOUNT,
+  getQrPaymentUrl,
+  getVariableSymbol,
+} from "@/lib/bank-transfer"
 
 const OrderDetailsTable = ({
   order,
-  paypalClientId,
   isAdmin,
   stripeClientSecret,
   userEmail,
   viewerToken,
 }: {
   order: Omit<Order, "paymentResult">
-  paypalClientId: string
   isAdmin: boolean
   stripeClientSecret: string | null
   userEmail: string
@@ -65,44 +61,14 @@ const OrderDetailsTable = ({
   } = order
 
   const contactEmail = user?.email || guestEmail || ""
+  const isBankTransfer = paymentMethod === "Převod"
+  const variableSymbol = getVariableSymbol(id)
+  const qrPaymentUrl =
+    isBankTransfer && !isPaid
+      ? getQrPaymentUrl({ amount: totalPrice, variableSymbol })
+      : ""
 
   const { toast } = useToast()
-
-  const PrintLoadingState = () => {
-    const [{ isPending, isRejected }] = usePayPalScriptReducer()
-
-    let status = ""
-
-    if (isPending) {
-      status = "Načítám PayPal..."
-    } else if (isRejected) {
-      status = "Chyba při načítání PayPal"
-    }
-
-    return status
-  }
-
-  const handleCreatePayPalOrder = async () => {
-    const res = await createPayPalOrder(order.id)
-
-    if (!res.success) {
-      toast({
-        variant: "destructive",
-        description: res.message,
-      })
-    }
-
-    return res.data
-  }
-
-  const handleApprovePayPalOrder = async (data: { orderID: string }) => {
-    const res = await approvePayPalOrder(order.id, data)
-
-    toast({
-      variant: res.success ? "default" : "destructive",
-      description: res.message,
-    })
-  }
 
   // Button to mark order as paid
   const MarkAsPaidButton = () => {
@@ -166,8 +132,8 @@ const OrderDetailsTable = ({
               <p className="mb-2 text-sm md:text-base">
                 {paymentMethod === "Stripe"
                   ? "Platba kartou"
-                  : paymentMethod === "PayPal"
-                    ? "Platba přes PayPal"
+                  : paymentMethod === "Převod"
+                    ? "Platba převodem"
                     : "Dobírka"}
               </p>
               {isPaid ? (
@@ -285,59 +251,96 @@ const OrderDetailsTable = ({
               </div>
             </CardContent>
           </Card>
-          {!isPaid &&
-            (paymentMethod === "Stripe" || paymentMethod === "Paypal") && (
-              <Card className="w-full md:w-auto" id="payment-section">
-                <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
-                  {/* PayPal Payment */}
-                  {!isPaid && paymentMethod === "Paypal" && (
-                    <div>
-                      <PayPalScriptProvider
-                        options={{
-                          clientId: paypalClientId,
-                        }}
-                      >
-                        <PrintLoadingState />
-                        <PayPalButtons
-                          createOrder={handleCreatePayPalOrder}
-                          onApprove={handleApprovePayPalOrder}
-                        />
-                      </PayPalScriptProvider>
-                    </div>
-                  )}
-                  {/* Stripe Payment */}
-                  {!isPaid &&
-                    paymentMethod === "Stripe" &&
-                    stripeClientSecret && (
-                      <StripePayment
-                        priceInCents={Number(order.totalPrice) * 100}
-                        orderId={order.id}
-                        clientSecret={stripeClientSecret}
-                        userEmail={userEmail}
-                        accessToken={viewerToken}
-                      />
-                    )}
+          {!isPaid && paymentMethod === "Stripe" && (
+            <Card className="w-full md:w-auto" id="payment-section">
+              <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
+                {stripeClientSecret && (
+                  <StripePayment
+                    priceInCents={Number(order.totalPrice) * 100}
+                    orderId={order.id}
+                    clientSecret={stripeClientSecret}
+                    userEmail={userEmail}
+                    accessToken={viewerToken}
+                  />
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Platební instrukce pro bankovní převod */}
+          {!isPaid && isBankTransfer && (
+            <Card
+              className="w-full md:w-auto bg-amber-50 dark:bg-amber-950/30"
+              id="payment-section"
+            >
+              <CardContent className="p-4 gap-3 space-y-3 text-sm md:text-base">
+                <h2 className="text-lg md:text-xl font-semibold">
+                  Platební instrukce
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Uhraďte objednávku převodem na náš účet. Po připsání platby
+                  ji začneme připravovat.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex justify-between gap-3">
+                    <span className="text-muted-foreground">Číslo účtu</span>
+                    <span className="font-semibold">{BANK_ACCOUNT}</span>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <span className="text-muted-foreground">
+                      Variabilní symbol
+                    </span>
+                    <span className="font-semibold">{variableSymbol}</span>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <span className="text-muted-foreground">Částka</span>
+                    <span className="font-semibold">
+                      {formatCurrency(totalPrice)}
+                    </span>
+                  </div>
+                </div>
+                <Separator />
+                <div className="flex flex-col items-center gap-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={qrPaymentUrl}
+                    alt="QR platba"
+                    width={200}
+                    height={200}
+                    className="rounded-md bg-white p-2"
+                  />
+                  <p className="text-xs text-muted-foreground text-center">
+                    Naskenujte QR kód v mobilním bankovnictví pro rychlou
+                    platbu.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Manuální platby (dobírka, převod) – admin označuje stav ručně */}
+          {isAdmin &&
+            (paymentMethod === "Hotovost" || paymentMethod === "Převod") &&
+            (!isPaid || !isDelivered) && (
+              <Card className="w-full md:w-auto">
+                <CardContent className="p-4 flex flex-wrap gap-3 text-sm md:text-base">
+                  {!isPaid && <MarkAsPaidButton />}
+                  {!isDelivered && <MarkAsDeliveredButton />}
                 </CardContent>
               </Card>
             )}
-
-          {/* Cash On Delivery – obě tlačítka najednou */}
-          {isAdmin && paymentMethod === "Hotovost" && (!isPaid || !isDelivered) && (
-            <Card className="w-full md:w-auto">
-              <CardContent className="p-4 flex flex-wrap gap-3 text-sm md:text-base">
-                {!isPaid && <MarkAsPaidButton />}
-                {!isDelivered && <MarkAsDeliveredButton />}
-              </CardContent>
-            </Card>
-          )}
-          {/* Delivery button for non-COD */}
-          {isAdmin && isPaid && !isDelivered && paymentMethod !== "Hotovost" && (
-            <Card className="w-full md:w-auto">
-              <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
-                <MarkAsDeliveredButton />
-              </CardContent>
-            </Card>
-          )}
+          {/* Delivery button for online-paid orders (Stripe) */}
+          {isAdmin &&
+            isPaid &&
+            !isDelivered &&
+            paymentMethod !== "Hotovost" &&
+            paymentMethod !== "Převod" && (
+              <Card className="w-full md:w-auto">
+                <CardContent className="p-4 gap-4 space-y-4 text-sm md:text-base">
+                  <MarkAsDeliveredButton />
+                </CardContent>
+              </Card>
+            )}
         </div>
       </div>
     </>
